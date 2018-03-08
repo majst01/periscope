@@ -28,6 +28,7 @@ func ListenAndServe(spec Specification) error {
 	e.Use(middleware.Recover())
 
 	e.GET("/units", p.UnitsHandler)
+	e.POST("/unit/:name", p.UnitHandler)
 	e.Static("/", "static")
 
 	srv := &http.Server{
@@ -69,18 +70,10 @@ func (p *Periscope) UnitsHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, u)
 }
 
-// ServiceHandler describe a Service
-func (p *Periscope) ServiceHandler(c echo.Context) error {
-	name := c.QueryParam("name")
-	m := c.Request().Method
-	log.WithFields(log.Fields{"service": name, "method": m}).Info("stopservice")
-
-	switch m {
-	case http.MethodGet:
-
-	case http.MethodDelete:
-	default:
-		log.WithFields(log.Fields{"method unknown": m}).Warn("stopservice")
-	}
+// UnitHandler describe a Service
+func (p *Periscope) UnitHandler(c echo.Context) error {
+	name := c.Param("name")
+	action := c.FormValue("action")
+	log.WithFields(log.Fields{"service": name, "action": action}).Info("unithandler")
 	return nil
 }

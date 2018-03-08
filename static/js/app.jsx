@@ -20,6 +20,15 @@ class UnitsItem extends React.Component {
   }
   stopUnit = (name) => (e) => {
     console.log('stop unit:', name);
+    this.serverRequest =
+      axios
+        .post("/unit/", name,, {
+          action: 'stop',
+        })
+        .then(function(response) {
+          console.log(response)
+          this.setState({ units: response.data.Units });
+        });
   }
   startUnit = (name) => (e) => {
     console.log('start unit:', name);
