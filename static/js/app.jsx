@@ -3,10 +3,10 @@ class UnitsItem extends React.Component {
   render() {
     return (
       <tr>
-        <td> <a href="#" onClick={this.showUnit(this.props.Name)} >{this.props.Name} </a> </td>
-        <td class="bg-primary">  {this.props.ActiveState} </td>
+        <td> <a href="#" className="badge badge-light" onClick={this.showUnit(this.props.Name)} >{this.props.Name} </a> </td>
+        <td> <span className="badge badge-pill badge-primary" > {this.props.ActiveState} </span> </td>
         <td>
-        <div class="btn-group" role="group" aria-label="Unit Actions">
+        <div className="btn-group" role="group" aria-label="Unit Actions">
           <button type="button" className="btn btn-danger btn-sm" onClick={this.stopUnit(this.props.Name)}>Stop</button>
           <button type="button" className="btn btn-success btn-sm" onClick={this.startUnit(this.props.Name)}>Start</button>
           <button type="button" className="btn btn-warning btn-sm" onClick={this.restartUnit(this.props.Name)}>Restart</button>
