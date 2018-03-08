@@ -8,7 +8,6 @@ import (
 	"github.com/labstack/echo/middleware"
 
 	"github.com/coreos/go-systemd/dbus"
-	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -71,10 +70,9 @@ func (p *Periscope) UnitsHandler(c echo.Context) error {
 }
 
 // ServiceHandler describe a Service
-func (p *Periscope) ServiceHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	m := r.Method
-	name := vars["name"]
+func (p *Periscope) ServiceHandler(c echo.Context) error {
+	name := c.QueryParam("name")
+	m := c.Request().Method
 	log.WithFields(log.Fields{"service": name, "method": m}).Info("stopservice")
 
 	switch m {
@@ -84,4 +82,5 @@ func (p *Periscope) ServiceHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		log.WithFields(log.Fields{"method unknown": m}).Warn("stopservice")
 	}
+	return nil
 }
