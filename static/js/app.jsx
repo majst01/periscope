@@ -4,11 +4,13 @@ class UnitsItem extends React.Component {
     return (
       <tr>
         <td> <a href="#" onClick={this.showUnit(this.props.Name)} >{this.props.Name} </a> </td>
-        <td> {this.props.ActiveState} </td>
+        <td class="bg-primary">  {this.props.ActiveState} </td>
         <td>
-          <button onClick={this.stopUnit(this.props.Name)}>Stop</button>
-          <button onClick={this.startUnit(this.props.Name)}>Start</button>
-          <button onClick={this.restartUnit(this.props.Name)}>Restart</button>
+        <div class="btn-group" role="group" aria-label="Unit Actions">
+          <button type="button" className="btn btn-danger btn-sm" onClick={this.stopUnit(this.props.Name)}>Stop</button>
+          <button type="button" className="btn btn-success btn-sm" onClick={this.startUnit(this.props.Name)}>Start</button>
+          <button type="button" className="btn btn-warning btn-sm" onClick={this.restartUnit(this.props.Name)}>Restart</button>
+        </div>
         </td>
       </tr>
     );
@@ -54,10 +56,16 @@ class UnitsList extends React.Component {
 
     return (
       <div>
-        <table><tbody>
-          <tr><th>Name</th><th>ActiveState</th><th>Action</th></tr>
-          {units}
-        </tbody></table>
+        <table className="table table-hover table-sm ">
+          <thead className="thead-dark">
+            <tr>
+              <th scope="col">Name</th><th scope="col">ActiveState</th><th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {units}
+          </tbody>
+        </table>
       </div>
     );
   }
