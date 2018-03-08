@@ -27,5 +27,5 @@ func main() {
 	}
 	spec.Log()
 
-	cmd.ListenAndServe(spec)
+	log.Fatal(cmd.ListenAndServe(spec))
 }
