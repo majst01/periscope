@@ -7,9 +7,9 @@ class UnitsItem extends React.Component {
         <td> <span className="badge badge-pill badge-primary" > {this.props.ActiveState} </span> </td>
         <td>
         <div className="btn-group" role="group" aria-label="Unit Actions">
-          <button type="button" className="btn btn-danger btn-sm" onClick={this.stopUnit(this.props.Name)}>Stop</button>
-          <button type="button" className="btn btn-success btn-sm" onClick={this.startUnit(this.props.Name)}>Start</button>
-          <button type="button" className="btn btn-warning btn-sm" onClick={this.restartUnit(this.props.Name)}>Restart</button>
+          <button type="button" className="btn btn-danger btn-sm" onClick={this.doUnit(this.props.Name, "stop")}>Stop</button>
+          <button type="button" className="btn btn-success btn-sm" onClick={this.doUnit(this.props.Name, "start")}>Start</button>
+          <button type="button" className="btn btn-warning btn-sm" onClick={this.doUnit(this.props.Name, "restart")}>Restart</button>
         </div>
         </td>
       </tr>
@@ -18,26 +18,20 @@ class UnitsItem extends React.Component {
   showUnit = (name) => (e) => {
     console.log('show unit:', name);
   }
-  stopUnit = (name) => (e) => {
-    console.log('stop unit:', name);
+  doUnit = (name, action) => (e) => {
+    console.log('stop unit:', name, action);
     this.serverRequest =
       axios
         .get("/unit", {
           params: {
             name: name,
-            action: 'stop'
+            action: action
           }
         })
         .then(function(response) {
           console.log(response)
           this.setState({ units: response.data.Units });
         });
-  }
-  startUnit = (name) => (e) => {
-    console.log('start unit:', name);
-  }
-  restartUnit = (name) => (e) => {
-    console.log('restart unit:', name);
   }
 
 }

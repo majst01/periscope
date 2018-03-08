@@ -40,20 +40,7 @@ func ListenAndServe(spec Specification) error {
 
 // UnitsHandler returns all systemd services
 func (p *Periscope) UnitsHandler(c echo.Context) error {
-	servicepattern := c.QueryParam("servicepattern")
-	statepattern := c.QueryParam("statepattern")
-	globalServicePattern := p.spec.ServicePattern
-	globalStatePattern := p.spec.StatePattern
-
-	if servicepattern != "" {
-		globalServicePattern = append(p.spec.ServicePattern, servicepattern)
-	}
-	if statepattern != "" {
-		globalStatePattern = append(p.spec.StatePattern, statepattern)
-	}
-	log.WithFields(log.Fields{"servicepattern": globalServicePattern, "statepattern": globalStatePattern}).Info("systemdhandler")
-
-	units, err := p.dbusConn.ListUnitsByPatterns(globalStatePattern, globalServicePattern)
+	units, err := p.getUnits()
 	if err != nil {
 		log.Fatalf("unable to list units:%v", err)
 	}
@@ -75,5 +62,13 @@ func (p *Periscope) UnitHandler(c echo.Context) error {
 	name := c.QueryParam("name")
 	action := c.QueryParam("action")
 	log.WithFields(log.Fields{"service": name, "action": action}).Info("unithandler")
-	return nil
+	return p.UnitsHandler(c)
+}
+
+func (p *Periscope) getUnits() ([]dbus.UnitStatus, error) {
+	units, err := p.dbusConn.ListUnitsByPatterns(p.spec.StatePattern, p.spec.ServicePattern)
+	if err != nil {
+		return nil, fmt.Errorf("unable to list units:%v", err)
+	}
+	return units, nil
 }
