@@ -28,7 +28,7 @@ func ListenAndServe(spec Specification) error {
 	e.Use(middleware.Recover())
 
 	e.GET("/units", p.UnitsHandler)
-	e.POST("/unit/:name", p.UnitHandler)
+	e.GET("/unit", p.UnitHandler)
 	e.Static("/", "static")
 
 	srv := &http.Server{
@@ -72,8 +72,8 @@ func (p *Periscope) UnitsHandler(c echo.Context) error {
 
 // UnitHandler describe a Service
 func (p *Periscope) UnitHandler(c echo.Context) error {
-	name := c.Param("name")
-	action := c.FormValue("action")
+	name := c.QueryParam("name")
+	action := c.QueryParam("action")
 	log.WithFields(log.Fields{"service": name, "action": action}).Info("unithandler")
 	return nil
 }

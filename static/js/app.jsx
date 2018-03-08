@@ -22,8 +22,11 @@ class UnitsItem extends React.Component {
     console.log('stop unit:', name);
     this.serverRequest =
       axios
-        .post("/unit/", name,, {
-          action: 'stop',
+        .get("/unit", {
+          params: {
+            name: name,
+            action: 'stop'
+          }
         })
         .then(function(response) {
           console.log(response)
