@@ -62,7 +62,13 @@ func (p *Periscope) UnitHandler(c echo.Context) error {
 	name := c.QueryParam("name")
 	action := c.QueryParam("action")
 	log.WithFields(log.Fields{"service": name, "action": action}).Info("unithandler")
-	return p.UnitsHandler(c)
+	var names []string
+	names = append(names, name)
+	unit, err := p.dbusConn.ListUnitsByNames(names)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+	return c.JSON(http.StatusOK, unit)
 }
 
 func (p *Periscope) getUnits() ([]dbus.UnitStatus, error) {

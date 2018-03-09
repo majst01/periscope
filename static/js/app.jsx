@@ -3,8 +3,11 @@ class UnitsItem extends React.Component {
   render() {
     return (
       <tr>
-        <td> <a href="#" className="badge badge-light" onClick={this.showUnit(this.props.Name)} >{this.props.Name} </a> </td>
+        <td> {this.props.Description} </td>
+        <td> <a href="#" className="badge badge-light" onClick={this.doUnit(this.props.Name, "describe")} >{this.props.Name} </a> </td>
+        <td> <span className="badge badge-pill badge-primary" > {this.props.LoadState} </span> </td>
         <td> <span className="badge badge-pill badge-primary" > {this.props.ActiveState} </span> </td>
+        <td> <span className="badge badge-pill badge-primary" > {this.props.SubState} </span> </td>
         <td>
         <div className="btn-group" role="group" aria-label="Unit Actions">
           <button type="button" className="btn btn-danger btn-sm" onClick={this.doUnit(this.props.Name, "stop")}>Stop</button>
@@ -15,11 +18,8 @@ class UnitsItem extends React.Component {
       </tr>
     );
   }
-  showUnit = (name) => (e) => {
-    console.log('show unit:', name);
-  }
   doUnit = (name, action) => (e) => {
-    console.log('stop unit:', name, action);
+    console.log(action, ' unit:', name);
     this.serverRequest =
       axios
         .get("/unit", {
@@ -30,7 +30,7 @@ class UnitsItem extends React.Component {
         })
         .then(function(response) {
           console.log(response)
-          this.setState({ units: response.data.Units });
+          this.setState({ FIXME });
         });
   }
 
@@ -47,7 +47,8 @@ class UnitsList extends React.Component {
     this.serverRequest =
       axios
         .get("/units")
-        .then((result) => {
+        .then((result) => {        <td> <span className="badge badge-pill badge-primary" > {this.props.ActiveState} </span> </td>
+
           console.log(result)
           this.setState({ units: result.data.Units });
         });
@@ -56,7 +57,11 @@ class UnitsList extends React.Component {
   render() {
     const units = this.state.units.map((unit, i) => {
       return (
-        <UnitsItem key={i} Name={unit.Name} ActiveState={unit.ActiveState} />
+        <UnitsItem key={i} Description={unit.Description}
+                           Name={unit.Name}
+                           LoadState={unit.LoadState}
+                           ActiveState={unit.ActiveState}
+                           SubState={unit.SubState} />
       );
     });
 
@@ -65,7 +70,12 @@ class UnitsList extends React.Component {
         <table className="table table-hover table-sm ">
           <thead className="thead-dark">
             <tr>
-              <th scope="col">Name</th><th scope="col">ActiveState</th><th scope="col">Action</th>
+              <th scope="col">Description</th>
+              <th scope="col">Name</th>
+              <th scope="col">LoadState</th>
+              <th scope="col">ActiveState</th>
+              <th scope="col">SubState</th>
+              <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody>
