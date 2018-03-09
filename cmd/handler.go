@@ -69,6 +69,7 @@ func (p *Periscope) UnitHandler(c echo.Context) error {
 		log.WithFields(log.Fields{"service": name, "action": action, "error": err}).Error("unithandler")
 		return c.JSON(http.StatusInternalServerError, err)
 	}
+
 	var id int
 	switch action {
 	case "start":
@@ -77,16 +78,18 @@ func (p *Periscope) UnitHandler(c echo.Context) error {
 		id, err = p.dbusConn.StopUnit(name, "replace", nil)
 	case "restart":
 		id, err = p.dbusConn.RestartUnit(name, "replace", nil)
+	case "describe":
+		// NOOP
 	default:
-		log.WithFields(log.Fields{"service": name, "action": action, "error": "unknown action"}).Error("unithandler")
+		log.WithFields(log.Fields{"service": name, "action": action, "error": "unknown action"}).Warn("unithandler")
 		return c.JSON(http.StatusOK, unit)
 	}
-
 	if err != nil {
 		log.WithFields(log.Fields{"service": name, "action": action, "error": err, "message": "action failed"}).Error("unithandler")
 		return c.JSON(http.StatusInternalServerError, unit)
 	}
-	log.WithFields(log.Fields{"service": name, "action": action, "id": id, "message": "action succeeded"}).Error("unithandler")
+
+	log.WithFields(log.Fields{"service": name, "action": action, "id": id, "message": "action succeeded"}).Info("unithandler")
 	return c.JSON(http.StatusOK, unit)
 }
 
