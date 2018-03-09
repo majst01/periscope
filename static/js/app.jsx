@@ -47,8 +47,7 @@ class UnitsList extends React.Component {
     this.serverRequest =
       axios
         .get("/units")
-        .then((result) => {        <td> <span className="badge badge-pill badge-primary" > {this.props.ActiveState} </span> </td>
-
+        .then((result) => {
           console.log(result)
           this.setState({ units: result.data.Units });
         });
@@ -87,4 +86,4 @@ class UnitsList extends React.Component {
   }
 }
 
-ReactDOM.render( <UnitsList/>, document.querySelector("#root"));
+ReactDOM.render( <UnitsList/>, document.querySelector("#units"));

@@ -66,8 +66,27 @@ func (p *Periscope) UnitHandler(c echo.Context) error {
 	names = append(names, name)
 	unit, err := p.dbusConn.ListUnitsByNames(names)
 	if err != nil {
+		log.WithFields(log.Fields{"service": name, "action": action, "error": err}).Error("unithandler")
 		return c.JSON(http.StatusInternalServerError, err)
 	}
+	var id int
+	switch action {
+	case "start":
+		id, err = p.dbusConn.StartUnit(name, "replace", nil)
+	case "stop":
+		id, err = p.dbusConn.StopUnit(name, "replace", nil)
+	case "restart":
+		id, err = p.dbusConn.RestartUnit(name, "replace", nil)
+	default:
+		log.WithFields(log.Fields{"service": name, "action": action, "error": "unknown action"}).Error("unithandler")
+		return c.JSON(http.StatusOK, unit)
+	}
+
+	if err != nil {
+		log.WithFields(log.Fields{"service": name, "action": action, "error": err, "message": "action failed"}).Error("unithandler")
+		return c.JSON(http.StatusInternalServerError, unit)
+	}
+	log.WithFields(log.Fields{"service": name, "action": action, "id": id, "message": "action succeeded"}).Error("unithandler")
 	return c.JSON(http.StatusOK, unit)
 }
 
