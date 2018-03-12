@@ -1,11 +1,11 @@
 all: clean dep test
-	go build
+	 go build
 
 test:
 	go test -v -race -cover $(shell go list ./...)
 
 clean:
-	rm -rf lib periscope
+	rm -rf periscope
 
 dep:
 	dep ensure

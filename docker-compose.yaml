@@ -1,0 +1,15 @@
+---
+version: '3'
+
+services:
+  periscope:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+     - 8080:8080
+    environment:
+     - PERISCOPE_SERVICEPATTERN=snap*
+    volumes:
+     - /var/run/dbus:/var/run/dbus
+     - /run/systemd/private:/run/systemd/private
