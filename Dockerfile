@@ -3,7 +3,9 @@ FROM golang:1.10 AS builder
 WORKDIR /go/src/github.com/majst01/periscope/
 
 COPY . /go/src/github.com/majst01/periscope/
-RUN go get -u github.com/golang/dep/cmd/dep \
+RUN apt update \
+ && apt install -y libsystemd-dev \
+ && go get -u github.com/golang/dep/cmd/dep \
  && make dep all
 
 FROM debian:9-slim

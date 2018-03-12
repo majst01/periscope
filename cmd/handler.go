@@ -108,7 +108,7 @@ func (p *Periscope) getUnits() ([]dbus.UnitStatus, error) {
 }
 
 func (p *Periscope) getJournal(name string) ([]string, error) {
-	journal := make([]string)
+	var journal []string
 	r, err := sdjournal.NewJournalReader(
 		sdjournal.JournalReaderConfig{
 			Since: time.Duration(-15) * time.Hour,
@@ -130,12 +130,12 @@ func (p *Periscope) getJournal(name string) ([]string, error) {
 	buff := new(bytes.Buffer)
 	var e error
 	for c := -1; c != 0 && e == nil; {
-		b := make([]byte, 10)
+		b := make([]byte, 5)
 		c, e = r.Read(b)
 		_, _ = buff.Write(b)
 	}
 
-	journal := strings.Split(buff.String(), "\n")
+	journal = strings.Split(buff.String(), "\n")
 	log.WithFields(log.Fields{"service": name, "journal": journal}).Info("getJournal")
 	return journal, nil
 }
