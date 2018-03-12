@@ -1,13 +1,17 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 
 	"github.com/coreos/go-systemd/dbus"
+	"github.com/coreos/go-systemd/sdjournal"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -79,7 +83,9 @@ func (p *Periscope) UnitHandler(c echo.Context) error {
 	case "restart":
 		id, err = p.dbusConn.RestartUnit(name, "replace", nil)
 	case "describe":
-		// NOOP
+		_, err = p.getJournal(name)
+	case "journal":
+		_, err = p.getJournal(name)
 	default:
 		log.WithFields(log.Fields{"service": name, "action": action, "error": "unknown action"}).Warn("unithandler")
 		return c.JSON(http.StatusOK, unit)
@@ -99,4 +105,37 @@ func (p *Periscope) getUnits() ([]dbus.UnitStatus, error) {
 		return nil, fmt.Errorf("unable to list units:%v", err)
 	}
 	return units, nil
+}
+
+func (p *Periscope) getJournal(name string) ([]string, error) {
+	journal := make([]string)
+	r, err := sdjournal.NewJournalReader(
+		sdjournal.JournalReaderConfig{
+			Since: time.Duration(-15) * time.Hour,
+			Matches: []sdjournal.Match{
+				{
+					Field: sdjournal.SD_JOURNAL_FIELD_SYSTEMD_UNIT,
+					Value: name,
+				},
+			},
+		})
+	if err != nil {
+		return journal, fmt.Errorf("Error opening journal: %s", err)
+	}
+	if r == nil {
+		return journal, fmt.Errorf("Got a nil reader")
+	}
+	defer r.Close()
+
+	buff := new(bytes.Buffer)
+	var e error
+	for c := -1; c != 0 && e == nil; {
+		b := make([]byte, 10)
+		c, e = r.Read(b)
+		_, _ = buff.Write(b)
+	}
+
+	journal := strings.Split(buff.String(), "\n")
+	log.WithFields(log.Fields{"service": name, "journal": journal}).Info("getJournal")
+	return journal, nil
 }

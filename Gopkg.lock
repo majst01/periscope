@@ -3,9 +3,18 @@
 
 [[projects]]
   name = "github.com/coreos/go-systemd"
-  packages = ["dbus"]
+  packages = [
+    "dbus",
+    "sdjournal"
+  ]
   revision = "40e2722dffead74698ca12a750f64ef313ddce05"
   version = "v16"
+
+[[projects]]
+  name = "github.com/coreos/pkg"
+  packages = ["dlopen"]
+  revision = "3ac0863d7acf3bc44daf49afef8919af12f704ef"
+  version = "v3"
 
 [[projects]]
   name = "github.com/dgrijalva/jwt-go"
@@ -97,6 +106,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7a8f8070880afb9fcd0fb7a5da1e37056dd4ece5d9f24a938966e704c8c42921"
+  inputs-digest = "85f0cf2f0dcee25e0c92f58797e5e3869b06f3fdaabd4c45e4944f3b05e07ec5"
   solver-name = "gps-cdcl"
   solver-version = 1
