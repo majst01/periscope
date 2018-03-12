@@ -19,19 +19,7 @@ class UnitsItem extends React.Component {
     );
   }
   doUnit = (name, action) => (e) => {
-    console.log(action, ' unit:', name);
-    this.serverRequest =
-      axios
-        .get("/unit", {
-          params: {
-            name: name,
-            action: action
-          }
-        })
-        .then(function(response) {
-          console.log(response)
-          this.setState({ FIXME });
-        });
+    this.props.onUnitClicked(name, action)
   }
 
 }
@@ -43,7 +31,7 @@ class UnitsList extends React.Component {
     this.state = { units: [] };
   }
 
-  componentDidMount() {
+  getUnits() {
     this.serverRequest =
       axios
         .get("/units")
@@ -52,6 +40,28 @@ class UnitsList extends React.Component {
           this.setState({ units: result.data.Units });
         });
   }
+  componentDidMount() {
+    this.getUnits()
+  }
+
+  onUnitClicked(name, action) {
+    console.log(action, ' unit:', name);
+    let self = this
+    this.serverRequest =
+      axios
+        .get("/unit", {
+          params: {
+            name: name,
+            action: action
+          }
+        })
+        .then(function(response) {
+          console.log(response)
+          self.getUnits()
+          // this.setState({ FIXME });
+        });
+  }
+
 
   render() {
     const units = this.state.units.map((unit, i) => {
@@ -60,7 +70,8 @@ class UnitsList extends React.Component {
                            Name={unit.Name}
                            LoadState={unit.LoadState}
                            ActiveState={unit.ActiveState}
-                           SubState={unit.SubState} />
+                           SubState={unit.SubState}
+                           onUnitClicked={this.onUnitClicked.bind(this)} />
       );
     });
 
