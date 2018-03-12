@@ -31,6 +31,11 @@ class UnitsList extends React.Component {
     this.state = { units: [] };
   }
 
+  componentDidMount() {
+    this.getUnits()
+    window.setInterval(() => {this.getUnits()}, 5000)
+  }
+
   getUnits() {
     this.serverRequest =
       axios
@@ -39,10 +44,6 @@ class UnitsList extends React.Component {
           console.log(result)
           this.setState({ units: result.data.Units });
         });
-  }
-  componentDidMount() {
-    this.getUnits()
-    window.setInterval(() => {this.getUnits()}, 5000)
   }
 
   onUnitClicked(name, action) {
@@ -62,7 +63,6 @@ class UnitsList extends React.Component {
           // this.setState({ FIXME });
         });
   }
-
 
   render() {
     const units = this.state.units.map((unit, i) => {
