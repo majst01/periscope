@@ -42,6 +42,7 @@ class UnitsList extends React.Component {
   }
   componentDidMount() {
     this.getUnits()
+    window.setInterval(() => {this.getUnits()}, 5000)
   }
 
   onUnitClicked(name, action) {
