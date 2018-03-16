@@ -28,4 +28,9 @@ To start simply type:
 $ ./periscope
 ```
 
+or from a docker container:
+```bash
+docker-compose up
+```
+
 Open your Browser at http://localhost:8080
