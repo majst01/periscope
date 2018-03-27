@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 
@@ -13,6 +14,11 @@ import (
 	"github.com/coreos/go-systemd/dbus"
 	"github.com/coreos/go-systemd/sdjournal"
 	log "github.com/sirupsen/logrus"
+)
+
+var (
+	stateRegex   *regexp.Regexp
+	serviceRegex *regexp.Regexp
 )
 
 // ListenAndServe starts the listener with appropriate parameters from Specification
@@ -25,6 +31,15 @@ func ListenAndServe(spec Specification) error {
 	p := &Periscope{
 		dbusConn: dbc,
 		spec:     &spec,
+	}
+
+	stateRegex, err = regexp.Compile(spec.StatePattern)
+	if err != nil {
+		log.Fatalf("unable to compile statepattern: %v", err)
+	}
+	serviceRegex, err = regexp.Compile(spec.ServicePattern)
+	if err != nil {
+		log.Fatalf("unable to compile servicepattern: %v", err)
 	}
 
 	e := echo.New()
@@ -100,11 +115,17 @@ func (p *Periscope) UnitHandler(c echo.Context) error {
 }
 
 func (p *Periscope) getUnits() ([]dbus.UnitStatus, error) {
-	units, err := p.dbusConn.ListUnitsByPatterns(p.spec.StatePattern, p.spec.ServicePattern)
+	units, err := p.dbusConn.ListUnits()
 	if err != nil {
 		return nil, fmt.Errorf("unable to list units:%v", err)
 	}
-	return units, nil
+	var result []dbus.UnitStatus
+	for _, unit := range units {
+		if serviceRegex.Match([]byte(unit.Name)) {
+			result = append(result, unit)
+		}
+	}
+	return result, nil
 }
 
 func (p *Periscope) getJournal(name string) ([]string, error) {
