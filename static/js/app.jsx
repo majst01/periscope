@@ -32,11 +32,12 @@ class UnitsItem extends React.Component {
 class UnitsList extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { units: [] };
+    this.state = { units: [], readonly: false};
   }
 
   componentDidMount() {
     this.getUnits()
+    this.getReadonly()
     window.setInterval(() => {this.getUnits()}, 5000)
   }
 
@@ -50,8 +51,21 @@ class UnitsList extends React.Component {
         });
   }
 
+  getReadonly() {
+    this.serverRequest =
+      axios
+        .get("/readonly")
+        .then((result) => {
+          console.log("readonly:" + result)
+          this.setState({ readonly: result });
+        });
+  }
+
   onUnitClicked(name, action) {
-    console.log(action, ' unit:', name);
+    console.log(action, ' unit:', name, ' readonly:', this.state.readonly);
+    if (this.state.readonly.data) {
+      return
+    }
     let self = this
     this.serverRequest =
       axios
@@ -75,27 +89,30 @@ class UnitsList extends React.Component {
                            LoadState={unit.LoadState}
                            ActiveState={unit.ActiveState}
                            SubState={unit.SubState}
-                           onUnitClicked={this.onUnitClicked.bind(this)} />
+                           onUnitClicked={this.onUnitClicked.bind(this)}/>
       );
     });
 
     return (
-      <div>
-        <table className="table table-hover table-sm ">
-          <thead className="thead-dark">
-            <tr>
-              <th scope="col">Description</th>
-              <th scope="col">Name</th>
-              <th scope="col">LoadState</th>
-              <th scope="col">ActiveState</th>
-              <th scope="col">SubState</th>
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {units}
-          </tbody>
-        </table>
+      <div className="container-fluid ">
+      <h2>Systemd Units</h2>
+        <div>
+          <table className="table table-hover table-sm ">
+            <thead className="thead-dark">
+              <tr>
+                <th scope="col">Description</th>
+                <th scope="col">Name</th>
+                <th scope="col">LoadState</th>
+                <th scope="col">ActiveState</th>
+                <th scope="col">SubState</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {units}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }

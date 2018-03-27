@@ -48,6 +48,7 @@ func ListenAndServe(spec Specification) error {
 
 	e.GET("/units", p.UnitsHandler)
 	e.GET("/unit", p.UnitHandler)
+	e.GET("/readonly", p.ReadonlyHandler)
 	e.Static("/", "static")
 
 	srv := &http.Server{
@@ -92,10 +93,19 @@ func (p *Periscope) UnitHandler(c echo.Context) error {
 	var id int
 	switch action {
 	case "start":
+		if p.spec.Readonly {
+			return c.JSON(http.StatusOK, unit)
+		}
 		id, err = p.dbusConn.StartUnit(name, "replace", nil)
 	case "stop":
+		if p.spec.Readonly {
+			return c.JSON(http.StatusOK, unit)
+		}
 		id, err = p.dbusConn.StopUnit(name, "replace", nil)
 	case "restart":
+		if p.spec.Readonly {
+			return c.JSON(http.StatusOK, unit)
+		}
 		id, err = p.dbusConn.RestartUnit(name, "replace", nil)
 	case "describe":
 		_, err = p.getJournal(name)
@@ -112,6 +122,11 @@ func (p *Periscope) UnitHandler(c echo.Context) error {
 
 	log.WithFields(log.Fields{"service": name, "action": action, "id": id, "message": "action succeeded"}).Info("unithandler")
 	return c.JSON(http.StatusOK, unit)
+}
+
+// ReadonlyHandler returns the readonly status
+func (p *Periscope) ReadonlyHandler(c echo.Context) error {
+	return c.JSON(http.StatusOK, p.spec.Readonly)
 }
 
 func (p *Periscope) getUnits() ([]dbus.UnitStatus, error) {
