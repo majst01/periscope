@@ -9,3 +9,6 @@ clean:
 
 dep:
 	dep ensure
+
+container:
+	docker build -t periscope .
