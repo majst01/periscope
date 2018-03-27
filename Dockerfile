@@ -4,9 +4,17 @@ WORKDIR /go/src/github.com/majst01/periscope/
 
 COPY . /go/src/github.com/majst01/periscope/
 RUN apt update \
- && apt install -y libsystemd-dev \
+ && apt install -y \
+        libsystemd-dev \
+        build-essential \
+        libssl-dev \
  && go get -u github.com/golang/dep/cmd/dep \
- && make dep all
+ && make dep all \
+ && curl -sL https://deb.nodesource.com/setup_8.x | bash - \
+ && apt install -y nodejs \
+ && npm install \
+ && node_modules/.bin/webpack -p \
+ && rm -rf node_modules
 
 FROM debian:9-slim
 
