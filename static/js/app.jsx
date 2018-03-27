@@ -1,13 +1,17 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import axios from 'axios';
+import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
 
 class UnitsItem extends React.Component {
   render() {
     return (
       <tr>
         <td> {this.props.Description} </td>
-        <td> <a href="#" className="badge badge-light" onClick={this.doUnit(this.props.Name, "describe")} >{this.props.Name} </a> </td>
-        <td> <span className="badge badge-pill badge-primary" > {this.props.LoadState} </span> </td>
-        <td> <span className="badge badge-pill badge-primary" > {this.props.ActiveState} </span> </td>
-        <td> <span className="badge badge-pill badge-primary" > {this.props.SubState} </span> </td>
+        <td> <a href="#" className="badge badge-light" onClick={this.doUnit(this.props.Name, "describe")} >{this.props.Name}</a></td>
+        <td> <span className="badge badge-primary" > {this.props.LoadState} </span> </td>
+        <td> <span className="badge badge-primary" > {this.props.ActiveState} </span> </td>
+        <td> <span className="badge badge-primary" > {this.props.SubState} </span> </td>
         <td>
         <div className="btn-group" role="group" aria-label="Unit Actions">
           <button type="button" className="btn btn-danger btn-sm" onClick={this.doUnit(this.props.Name, "stop")}>Stop</button>
@@ -18,12 +22,12 @@ class UnitsItem extends React.Component {
       </tr>
     );
   }
-  doUnit = (name, action) => (e) => {
-    this.props.onUnitClicked(name, action)
+  doUnit(name, action){
+    return (e) => {
+      this.props.onUnitClicked(name, action)
+    }
   }
-
 }
-
 
 class UnitsList extends React.Component {
   constructor(props) {
@@ -60,7 +64,6 @@ class UnitsList extends React.Component {
         .then(function(response) {
           console.log(response)
           self.getUnits()
-          // this.setState({ FIXME });
         });
   }
 
