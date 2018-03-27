@@ -111,7 +111,7 @@ func (p *Periscope) getJournal(name string) ([]string, error) {
 	var journal []string
 	r, err := sdjournal.NewJournalReader(
 		sdjournal.JournalReaderConfig{
-			Since: time.Duration(-15) * time.Hour,
+			Since: time.Duration(-1) * time.Hour,
 			Matches: []sdjournal.Match{
 				{
 					Field: sdjournal.SD_JOURNAL_FIELD_SYSTEMD_UNIT,
@@ -130,7 +130,7 @@ func (p *Periscope) getJournal(name string) ([]string, error) {
 	buff := new(bytes.Buffer)
 	var e error
 	for c := -1; c != 0 && e == nil; {
-		b := make([]byte, 5)
+		b := make([]byte, 2)
 		c, e = r.Read(b)
 		_, _ = buff.Write(b)
 	}
