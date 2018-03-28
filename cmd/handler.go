@@ -43,6 +43,7 @@ func ListenAndServe(spec Specification) error {
 
 	e.GET("/units", p.UnitsHandler)
 	e.GET("/unit", p.UnitHandler)
+	e.GET("/journal", p.JournalHandler)
 	e.GET("/readonly", p.ReadonlyHandler)
 	e.Static("/", "static")
 
@@ -76,9 +77,12 @@ func (p *Periscope) UnitsHandler(c echo.Context) error {
 func (p *Periscope) UnitHandler(c echo.Context) error {
 	name := c.QueryParam("name")
 	action := c.QueryParam("action")
+	if !serviceRegex.Match([]byte(name)) {
+		log.WithFields(log.Fields{"service": name, "does not match servicepattern": p.spec.ServicePattern}).Warn("unithandler")
+		return c.JSON(http.StatusForbidden, "given unit does not match servicepattern")
+	}
 	log.WithFields(log.Fields{"service": name, "action": action}).Info("unithandler")
-	var names []string
-	names = append(names, name)
+	names := []string{name}
 	unit, err := p.dbusConn.ListUnitsByNames(names)
 	if err != nil {
 		log.WithFields(log.Fields{"service": name, "action": action, "error": err}).Error("unithandler")
@@ -119,6 +123,21 @@ func (p *Periscope) UnitHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, unit)
 }
 
+// JournalHandler returns a list of journalentries
+func (p *Periscope) JournalHandler(c echo.Context) error {
+	name := c.QueryParam("name")
+	if !serviceRegex.Match([]byte(name)) {
+		log.WithFields(log.Fields{"service": name, "does not match servicepattern": p.spec.ServicePattern}).Warn("journalhandler")
+		return c.JSON(http.StatusForbidden, "given unit does not match servicepattern")
+	}
+	journal, err := p.getJournal(name)
+	if err != nil {
+		log.WithFields(log.Fields{"service": name, "error": err, "message": "reading journal failed"}).Error("journalhandler")
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+	return c.JSON(http.StatusOK, journal)
+}
+
 // ReadonlyHandler returns the readonly status
 func (p *Periscope) ReadonlyHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, p.spec.Readonly)
@@ -139,10 +158,15 @@ func (p *Periscope) getUnits() ([]dbus.UnitStatus, error) {
 }
 
 func (p *Periscope) getJournal(name string) ([]string, error) {
+	if !serviceRegex.Match([]byte(name)) {
+		log.WithFields(log.Fields{"service": name, "does not match servicepattern": p.spec.ServicePattern}).Warn("getjournal")
+		return nil, fmt.Errorf("given unit does not match servicepattern")
+	}
+
 	var journal []string
 	r, err := sdjournal.NewJournalReader(
 		sdjournal.JournalReaderConfig{
-			Since: time.Duration(-1) * time.Hour,
+			Since: time.Duration(-100) * time.Hour,
 			Matches: []sdjournal.Match{
 				{
 					Field: sdjournal.SD_JOURNAL_FIELD_SYSTEMD_UNIT,
@@ -167,6 +191,8 @@ func (p *Periscope) getJournal(name string) ([]string, error) {
 	}
 
 	journal = strings.Split(buff.String(), "\n")
-	log.WithFields(log.Fields{"service": name, "journal": journal}).Info("getJournal")
+	for _, entry := range journal {
+		log.WithFields(log.Fields{"service": name, "journal": entry}).Info("getJournal")
+	}
 	return journal, nil
 }
