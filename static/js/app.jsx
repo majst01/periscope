@@ -5,6 +5,18 @@ import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
 
 class UnitsItem extends React.Component {
   render() {
+    let buttonGroup = (
+      <td>
+        <div className="btn-group" role="group" aria-label="Unit Actions">
+          <button type="button" className="btn btn-danger btn-sm" onClick={this.doUnit(this.props.Name, "stop")}>Stop</button>
+          <button type="button" className="btn btn-success btn-sm" onClick={this.doUnit(this.props.Name, "start")}>Start</button>
+          <button type="button" className="btn btn-warning btn-sm" onClick={this.doUnit(this.props.Name, "restart")}>Restart</button>
+        </div>
+      </td>
+    )
+    if (this.props.readonly) {
+      buttonGroup = null
+    }
     return (
       <tr>
         <td> {this.props.Description} </td>
@@ -12,13 +24,7 @@ class UnitsItem extends React.Component {
         <td> <span className="badge badge-primary" > {this.props.LoadState} </span> </td>
         <td> <span className="badge badge-primary" > {this.props.ActiveState} </span> </td>
         <td> <span className="badge badge-primary" > {this.props.SubState} </span> </td>
-        <td>
-        <div className="btn-group" role="group" aria-label="Unit Actions">
-          <button type="button" className="btn btn-danger btn-sm" onClick={this.doUnit(this.props.Name, "stop")}>Stop</button>
-          <button type="button" className="btn btn-success btn-sm" onClick={this.doUnit(this.props.Name, "start")}>Start</button>
-          <button type="button" className="btn btn-warning btn-sm" onClick={this.doUnit(this.props.Name, "restart")}>Restart</button>
-        </div>
-        </td>
+        {buttonGroup}
       </tr>
     );
   }
@@ -89,10 +95,17 @@ class UnitsList extends React.Component {
                            LoadState={unit.LoadState}
                            ActiveState={unit.ActiveState}
                            SubState={unit.SubState}
-                           onUnitClicked={this.onUnitClicked.bind(this)}/>
+                           onUnitClicked={this.onUnitClicked.bind(this)}
+                           readonly={this.state.readonly.data}/>
       );
     });
 
+    let actionHeader = (
+      <th scope="col">Action</th>
+    )
+    if (this.state.readonly.data) (
+      actionHeader = null
+    )
     return (
       <div className="container-fluid ">
       <h2>Systemd Units</h2>
@@ -105,7 +118,7 @@ class UnitsList extends React.Component {
                 <th scope="col">LoadState</th>
                 <th scope="col">ActiveState</th>
                 <th scope="col">SubState</th>
-                <th scope="col">Action</th>
+                { actionHeader }
               </tr>
             </thead>
             <tbody>

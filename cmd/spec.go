@@ -19,6 +19,7 @@ func (s *Specification) Log() {
 		"statepattern":   s.StatePattern,
 		"servicepattern": s.ServicePattern,
 		"port":           s.Port,
+		"readonly":       s.Readonly,
 		"debug":          s.Debug,
 	}).Info("config:")
 }
