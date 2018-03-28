@@ -82,8 +82,7 @@ func (p *Periscope) UnitHandler(c echo.Context) error {
 		return c.JSON(http.StatusForbidden, "given unit does not match servicepattern")
 	}
 	log.WithFields(log.Fields{"service": name, "action": action}).Info("unithandler")
-	names := []string{name}
-	unit, err := p.dbusConn.ListUnitsByNames(names)
+	unit, err := p.getUnit(name)
 	if err != nil {
 		log.WithFields(log.Fields{"service": name, "action": action, "error": err}).Error("unithandler")
 		return c.JSON(http.StatusInternalServerError, err)
@@ -143,6 +142,21 @@ func (p *Periscope) ReadonlyHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, p.spec.Readonly)
 }
 
+func (p *Periscope) getUnit(name string) (dbus.UnitStatus, error) {
+	units, err := p.getUnits()
+	var result dbus.UnitStatus
+	if err != nil {
+		return result, fmt.Errorf("unable to list units:%v", err)
+	}
+	for _, unit := range units {
+		if unit.Name == name {
+			result = unit
+			break
+		}
+	}
+	return result, nil
+}
+
 func (p *Periscope) getUnits() ([]dbus.UnitStatus, error) {
 	units, err := p.dbusConn.ListUnits()
 	if err != nil {
@@ -192,7 +206,7 @@ func (p *Periscope) getJournal(name string) ([]string, error) {
 
 	journal = strings.Split(buff.String(), "\n")
 	for _, entry := range journal {
-		log.WithFields(log.Fields{"service": name, "journal": entry}).Info("getJournal")
+		log.WithFields(log.Fields{"service": name, "journal": entry}).Debug("getJournal")
 	}
 	return journal, nil
 }
