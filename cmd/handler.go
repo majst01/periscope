@@ -17,7 +17,6 @@ import (
 )
 
 var (
-	stateRegex   *regexp.Regexp
 	serviceRegex *regexp.Regexp
 )
 
@@ -33,10 +32,6 @@ func ListenAndServe(spec Specification) error {
 		spec:     &spec,
 	}
 
-	stateRegex, err = regexp.Compile(spec.StatePattern)
-	if err != nil {
-		log.Fatalf("unable to compile statepattern: %v", err)
-	}
 	serviceRegex, err = regexp.Compile(spec.ServicePattern)
 	if err != nil {
 		log.Fatalf("unable to compile servicepattern: %v", err)
