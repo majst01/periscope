@@ -58,7 +58,7 @@ class UnitsItem extends React.Component {
       <tr>
         <td>{this.props.Description}</td>
         <td>
-          <a href="#" className="badge badge-light" onClick={this.doUnit(this.props.Name, "describe")} >{this.props.Name}</a>
+          <a href="#" className="badge badge-light" onClick={this.doUnit(this.props.Name, "describe")}>{this.props.Name}</a>
         </td>
         <td>
           <span className={loadStateBadge} >{this.props.LoadState}</span> / <span className={activeStateBadge}>{this.props.ActiveState}</span> / <span className={subStateBadge}>{this.props.SubState}</span>
@@ -77,7 +77,12 @@ class UnitsItem extends React.Component {
 class UnitsList extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { units: [], readonly: false, filterString: ""};
+    this.state = {
+      units: [],
+      readonly: false,
+      filterString: "",
+      journal: []
+    };
   }
 
   componentDidMount() {
@@ -110,6 +115,20 @@ class UnitsList extends React.Component {
     console.log(action, ' unit:', name, ' readonly:', this.state.readonly);
     if (this.state.readonly.data) {
       return
+    }
+    if (action == "describe") {
+      console.log('describe:', name)
+      this.serverRequest =
+      axios
+        .get("/journal", {
+          params: {
+            name: name
+          }
+        })
+        .then(function(response) {
+          console.log("journal:", response)
+          self.setState({ journal: response.data })
+        });
     }
     let self = this
     this.serverRequest =
@@ -145,6 +164,12 @@ class UnitsList extends React.Component {
       );
     });
 
+    const journalRows = this.state.journal.map((j,i) => {
+      return (
+              <tr key={i}><td>{ j }</td></tr>
+      );
+    });
+
     let actionHeader = (
       <th scope="col">Action</th>
     )
@@ -153,7 +178,7 @@ class UnitsList extends React.Component {
     )
 
     return (
-      <div className="container-fluid ">
+      <div className="container-fluid">
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
           <a className="navbar-brand" href="#">Systemd Units</a>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
@@ -178,9 +203,16 @@ class UnitsList extends React.Component {
               </tr>
             </thead>
             <tbody>
-              {units}
+              { units }
             </tbody>
           </table>
+        </div>
+        <div className="container-fluid" style={{position: "fixed", bottom: 0, left: 0, right: 0, height: 200, background: "white", overflowY: "auto"}}>
+        <table>
+          <tbody>
+          { journalRows }
+          </tbody>
+        </table>
         </div>
       </div>
     );

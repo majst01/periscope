@@ -166,7 +166,7 @@ func (p *Periscope) getJournal(name string) ([]string, error) {
 	var journal []string
 	r, err := sdjournal.NewJournalReader(
 		sdjournal.JournalReaderConfig{
-			Since: time.Duration(-100) * time.Hour,
+			Since: time.Duration(-10) * time.Hour,
 			Matches: []sdjournal.Match{
 				{
 					Field: sdjournal.SD_JOURNAL_FIELD_SYSTEMD_UNIT,
