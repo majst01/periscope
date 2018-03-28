@@ -56,11 +56,13 @@ class UnitsItem extends React.Component {
     }
     return (
       <tr>
-        <td> {this.props.Description} </td>
-        <td> <a href="#" className="badge badge-light" onClick={this.doUnit(this.props.Name, "describe")} >{this.props.Name}</a></td>
-        <td> <span className={loadStateBadge} > {this.props.LoadState} </span> </td>
-        <td> <span className={activeStateBadge} > {this.props.ActiveState} </span> </td>
-        <td> <span className={subStateBadge} > {this.props.SubState} </span> </td>
+        <td>{this.props.Description}</td>
+        <td>
+          <a href="#" className="badge badge-light" onClick={this.doUnit(this.props.Name, "describe")} >{this.props.Name}</a>
+        </td>
+        <td>
+          <span className={loadStateBadge} >{this.props.LoadState}</span> / <span className={activeStateBadge}>{this.props.ActiveState}</span> / <span className={subStateBadge}>{this.props.SubState}</span>
+        </td>
         {buttonGroup}
       </tr>
     );
@@ -145,16 +147,22 @@ class UnitsList extends React.Component {
     )
     return (
       <div className="container-fluid ">
-      <h2>Systemd Units</h2>
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+          <a className="navbar-brand" href="#">Systemd Units</a>
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            <form className="form-inline my-2 my-lg-0">
+              <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"></input>
+              <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+          </div>
+        </nav>
         <div>
           <table className="table table-hover table-sm ">
             <thead className="thead-dark">
               <tr>
                 <th scope="col">Description</th>
                 <th scope="col">Name</th>
-                <th scope="col">LoadState</th>
-                <th scope="col">ActiveState</th>
-                <th scope="col">SubState</th>
+                <th scope="col">State</th>
                 { actionHeader }
               </tr>
             </thead>
