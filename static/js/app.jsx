@@ -17,13 +17,50 @@ class UnitsItem extends React.Component {
     if (this.props.readonly) {
       buttonGroup = null
     }
+    let loadStateBadge = "badge badge-primary"
+    let activeStateBadge = "badge badge-primary"
+    let subStateBadge = "badge badge-primary"
+    switch (this.props.LoadState) {
+      case "loaded":
+        loadStateBadge = "badge badge-success"
+        break;
+      default:
+        loadStateBadge = "badge badge-warning"
+        break;
+    }
+    switch (this.props.ActiveState) {
+      case "active":
+        activeStateBadge = "badge badge-success"
+        break;
+      case "inactive":
+        activeStateBadge = "badge badge-warning"
+        break;
+      default:
+        activeStateBadge = "badge badge-warning"
+        break;
+    }
+    switch (this.props.SubState) {
+      case "dead":
+        subStateBadge = "badge badge-danger"
+        break;
+      case "running":
+      case "mounted":
+        subStateBadge = "badge badge-success"
+        break;
+      case "waiting":
+        subStateBadge = "badge badge-warning"
+        break;
+      default:
+        subStateBadge = "badge badge-warning"
+        break;
+    }
     return (
       <tr>
         <td> {this.props.Description} </td>
         <td> <a href="#" className="badge badge-light" onClick={this.doUnit(this.props.Name, "describe")} >{this.props.Name}</a></td>
-        <td> <span className="badge badge-primary" > {this.props.LoadState} </span> </td>
-        <td> <span className="badge badge-primary" > {this.props.ActiveState} </span> </td>
-        <td> <span className="badge badge-primary" > {this.props.SubState} </span> </td>
+        <td> <span className={loadStateBadge} > {this.props.LoadState} </span> </td>
+        <td> <span className={activeStateBadge} > {this.props.ActiveState} </span> </td>
+        <td> <span className={subStateBadge} > {this.props.SubState} </span> </td>
         {buttonGroup}
       </tr>
     );
