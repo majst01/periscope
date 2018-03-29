@@ -207,12 +207,15 @@ class UnitsList extends React.Component {
             </tbody>
           </table>
         </div>
-        <div className="container-fluid" style={{position: "fixed", bottom: 0, left: 0, right: 0, height: 200, background: "white", overflowY: "auto"}}>
-        <table>
-          <tbody>
-          { journalRows }
-          </tbody>
-        </table>
+        <div class="card fixed-bottom">
+          <div class="card-header">Journal</div>
+          <div class="card-body">
+            <table>
+              <tbody>
+              { journalRows }
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     );
