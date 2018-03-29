@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"regexp"
 	"strings"
@@ -178,7 +178,7 @@ func (p *Periscope) getJournal(name string) ([]string, error) {
 	}
 
 	var journal []string
-	r, err := sdjournal.NewJournalReader(
+	journalReader, err := sdjournal.NewJournalReader(
 		sdjournal.JournalReaderConfig{
 			Since: time.Duration(-10) * time.Hour,
 			Matches: []sdjournal.Match{
@@ -191,20 +191,16 @@ func (p *Periscope) getJournal(name string) ([]string, error) {
 	if err != nil {
 		return journal, fmt.Errorf("Error opening journal: %s", err)
 	}
-	if r == nil {
+	if journalReader == nil {
 		return journal, fmt.Errorf("Got a nil reader")
 	}
-	defer r.Close()
+	defer journalReader.Close()
 
-	buff := new(bytes.Buffer)
-	var e error
-	for c := -1; c != 0 && e == nil; {
-		b := make([]byte, 2)
-		c, e = r.Read(b)
-		_, _ = buff.Write(b)
+	buff, err := ioutil.ReadAll(journalReader)
+	if err != nil {
+		return journal, fmt.Errorf("reading all from journal failed: %v", err)
 	}
-
-	journal = strings.Split(buff.String(), "\n")
+	journal = strings.Split(string(buff), "\n")
 	for _, entry := range journal {
 		log.WithFields(log.Fields{"service": name, "journal": entry}).Debug("getJournal")
 	}
