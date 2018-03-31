@@ -18,41 +18,41 @@ class UnitsItem extends React.Component {
     if (this.props.readonly) {
       buttonGroup = null
     }
-    var loadStateBadge = "badge badge-primary"
-    var activeStateBadge = "badge badge-primary"
-    var subStateBadge = "badge badge-primary"
+    var loadStateBadge = "btn btn-primary"
+    var activeStateBadge = "btn btn-primary"
+    var subStateBadge = "btn btn-primary"
     switch (this.props.LoadState) {
       case "loaded":
-        loadStateBadge = "badge badge-success"
+        loadStateBadge = "btn btn-success"
         break;
       default:
-        loadStateBadge = "badge badge-warning"
+        loadStateBadge = "btn btn-warning"
         break;
     }
     switch (this.props.ActiveState) {
       case "active":
-        activeStateBadge = "badge badge-success"
+        activeStateBadge = "btn btn-success"
         break;
       case "inactive":
-        activeStateBadge = "badge badge-warning"
+        activeStateBadge = "btn btn-warning"
         break;
       default:
-        activeStateBadge = "badge badge-warning"
+        activeStateBadge = "btn btn-warning"
         break;
     }
     switch (this.props.SubState) {
       case "dead":
-        subStateBadge = "badge badge-danger"
+        subStateBadge = "btn btn-danger"
         break;
       case "running":
       case "mounted":
-        subStateBadge = "badge badge-success"
+        subStateBadge = "btn btn-success"
         break;
       case "waiting":
-        subStateBadge = "badge badge-warning"
+        subStateBadge = "btn btn-warning"
         break;
       default:
-        subStateBadge = "badge badge-warning"
+        subStateBadge = "btn btn-warning"
         break;
     }
     return (
@@ -62,7 +62,11 @@ class UnitsItem extends React.Component {
           <a href="#" className="badge badge-light" onClick={this.doUnit(this.props.Name, "describe")}>{this.props.Name}</a>
         </td>
         <td>
-          <span className={loadStateBadge} >{this.props.LoadState}</span> / <span className={activeStateBadge}>{this.props.ActiveState}</span> / <span className={subStateBadge}>{this.props.SubState}</span>
+          <div className="btn-group btn-group-sm" role="group" aria-label="Unit Status">
+            <button type="button" className={loadStateBadge} >{this.props.LoadState}</button>
+            <button type="button" className={activeStateBadge} >{this.props.ActiveState}</button>
+            <button type="button" className={subStateBadge} >{this.props.SubState}</button>
+          </div>
         </td>
         {buttonGroup}
       </tr>
