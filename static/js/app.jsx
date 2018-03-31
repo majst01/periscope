@@ -157,7 +157,12 @@ class UnitsList extends React.Component {
   render() {
     const units = this.state.units.filter(unit => {
       return this.state.filterString.length < 3 || unit.Name.indexOf(this.state.filterString) >= 0
-    }).map((unit, i) => {
+    }).sort((a,b) => {
+        if(a.Name.toLowerCase() < b.Name.toLowerCase()) return -1;
+        if(a.Name.toLowerCase() > b.Name.toLowerCase()) return 1;
+        return 0;
+    })
+    .map((unit, i) => {
       return (
         <UnitsItem key={i} Description={unit.Description}
           Name={unit.Name}
