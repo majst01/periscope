@@ -5,7 +5,7 @@ import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
 
 class UnitsItem extends React.Component {
   render() {
-    let buttonGroup = (
+    var buttonGroup = (
       <td>
         <div className="btn-group" role="group" aria-label="Unit Actions">
           <button type="button" className="btn btn-danger btn-sm" onClick={this.doUnit(this.props.Name, "stop")}>Stop</button>
@@ -17,9 +17,9 @@ class UnitsItem extends React.Component {
     if (this.props.readonly) {
       buttonGroup = null
     }
-    let loadStateBadge = "badge badge-primary"
-    let activeStateBadge = "badge badge-primary"
-    let subStateBadge = "badge badge-primary"
+    var loadStateBadge = "badge badge-primary"
+    var activeStateBadge = "badge badge-primary"
+    var subStateBadge = "badge badge-primary"
     switch (this.props.LoadState) {
       case "loaded":
         loadStateBadge = "badge badge-success"
@@ -207,9 +207,9 @@ class UnitsList extends React.Component {
             </tbody>
           </table>
         </div>
-        <div class="card fixed-bottom">
-          <div class="card-header">Journal</div>
-          <div class="card-body">
+        <div className="card fixed-bottom">
+          <div className="card-header">Journal</div>
+          <div className="card-body">
             <table>
               <tbody>
               { journalRows }
