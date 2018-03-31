@@ -3,70 +3,72 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
 
+class UnitState extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  getStateClass(state) {
+    var result = "btn btn-primary"
+    switch (state) {
+      case "loaded":
+      case "active":
+        result = "btn btn-success"
+        break;
+      case "inactive":
+        result = "btn btn-warning"
+        break;
+      case "dead":
+        result = "btn btn-danger"
+        break;
+      case "running":
+      case "mounted":
+        result = "btn btn-success"
+        break;
+      case "waiting":
+        result = "btn btn-warning"
+        break;
+      default:
+        result = "btn btn-warning"
+        break;
+    }
+    return result
+  }
+  render() {
+    var loadStateBadge = this.getStateClass(this.props.Unit.LoadState)
+    var activeStateBadge = this.getStateClass(this.props.Unit.ActiveState)
+    var subStateBadge = this.getStateClass(this.props.Unit.SubState)
+    return (
+      <div className="btn-group btn-group-sm" role="group" aria-label="Unit Status">
+        <button type="button" className={loadStateBadge} >{this.props.Unit.LoadState}</button>
+        <button type="button" className={activeStateBadge} >{this.props.Unit.ActiveState}</button>
+        <button type="button" className={subStateBadge} >{this.props.Unit.SubState}</button>
+      </div>
+    )
+  }
+}
 
 class UnitsItem extends React.Component {
   render() {
     var buttonGroup = (
       <td>
         <div className="btn-group" role="group" aria-label="Unit Actions">
-          <button type="button" className="btn btn-danger btn-sm" onClick={this.doUnit(this.props.Name, "stop")}>Stop</button>
-          <button type="button" className="btn btn-success btn-sm" onClick={this.doUnit(this.props.Name, "start")}>Start</button>
-          <button type="button" className="btn btn-warning btn-sm" onClick={this.doUnit(this.props.Name, "restart")}>Restart</button>
+          <button type="button" className="btn btn-danger btn-sm" onClick={this.doUnit(this.props.Unit.Name, "stop")}>Stop</button>
+          <button type="button" className="btn btn-success btn-sm" onClick={this.doUnit(this.props.Unit.Name, "start")}>Start</button>
+          <button type="button" className="btn btn-warning btn-sm" onClick={this.doUnit(this.props.Unit.Name, "restart")}>Restart</button>
         </div>
       </td>
     )
     if (this.props.readonly) {
       buttonGroup = null
     }
-    var loadStateBadge = "btn btn-primary"
-    var activeStateBadge = "btn btn-primary"
-    var subStateBadge = "btn btn-primary"
-    switch (this.props.LoadState) {
-      case "loaded":
-        loadStateBadge = "btn btn-success"
-        break;
-      default:
-        loadStateBadge = "btn btn-warning"
-        break;
-    }
-    switch (this.props.ActiveState) {
-      case "active":
-        activeStateBadge = "btn btn-success"
-        break;
-      case "inactive":
-        activeStateBadge = "btn btn-warning"
-        break;
-      default:
-        activeStateBadge = "btn btn-warning"
-        break;
-    }
-    switch (this.props.SubState) {
-      case "dead":
-        subStateBadge = "btn btn-danger"
-        break;
-      case "running":
-      case "mounted":
-        subStateBadge = "btn btn-success"
-        break;
-      case "waiting":
-        subStateBadge = "btn btn-warning"
-        break;
-      default:
-        subStateBadge = "btn btn-warning"
-        break;
-    }
     return (
       <tr>
-        <td>{this.props.Description}</td>
+        <td>{this.props.Unit.Description}</td>
         <td>
-          <a href="#" className="badge badge-light" onClick={this.doUnit(this.props.Name, "describe")}>{this.props.Name}</a>
+          <a href="#" className="badge badge-light" onClick={this.doUnit(this.props.Unit.Name, "describe")}>{this.props.Unit.Name}</a>
         </td>
         <td>
-          <div className="btn-group btn-group-sm" role="group" aria-label="Unit Status">
-            <button type="button" className={loadStateBadge} >{this.props.LoadState}</button>
-            <button type="button" className={activeStateBadge} >{this.props.ActiveState}</button>
-            <button type="button" className={subStateBadge} >{this.props.SubState}</button>
-          </div>
+          <UnitState Unit={this.props.Unit} />
         </td>
         {buttonGroup}
       </tr>
@@ -157,22 +159,19 @@ class UnitsList extends React.Component {
   render() {
     const units = this.state.units.filter(unit => {
       return this.state.filterString.length < 3 || unit.Name.indexOf(this.state.filterString) >= 0
-    }).sort((a,b) => {
-        if(a.Name.toLowerCase() < b.Name.toLowerCase()) return -1;
-        if(a.Name.toLowerCase() > b.Name.toLowerCase()) return 1;
-        return 0;
+    }).sort((a, b) => {
+      if (a.Name.toLowerCase() < b.Name.toLowerCase()) return -1;
+      if (a.Name.toLowerCase() > b.Name.toLowerCase()) return 1;
+      return 0;
     })
-    .map((unit, i) => {
-      return (
-        <UnitsItem key={i} Description={unit.Description}
-          Name={unit.Name}
-          LoadState={unit.LoadState}
-          ActiveState={unit.ActiveState}
-          SubState={unit.SubState}
-          onUnitClicked={this.onUnitClicked.bind(this)}
-          readonly={this.state.readonly.data} />
-      );
-    });
+      .map((unit, i) => {
+        return (
+          <UnitsItem key={i}
+            Unit={unit}
+            onUnitClicked={this.onUnitClicked.bind(this)}
+            readonly={this.state.readonly.data} />
+        );
+      });
 
     const journalRows = this.state.journal.map((j, i) => {
       return (
