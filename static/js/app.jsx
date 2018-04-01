@@ -165,32 +165,38 @@ class UnitsList extends React.Component {
     this.setState({ filterString: e.target.value })
   }
 
-  toggleNameSortOrder() {
-    if (this.state.sortBy == SortOrder.NAME_ASC) {
-      this.setState({ sortBy: SortOrder.NAME_DESC })
-    } else if (this.state.sortBy == SortOrder.NAME_DESC) {
-      this.setState({ sortBy: SortOrder.NAME_ASC })
-    } else {
-      this.setState({ sortBy: SortOrder.NAME_ASC })
-    }
-  }
-  toggleDescSortOrder() {
-    if (this.state.sortBy == SortOrder.DESCRIPTION_ASC) {
-      this.setState({ sortBy: SortOrder.DESCRIPTION_DESC })
-    } else if (this.state.sortBy == SortOrder.DESCRIPTION_DESC) {
-      this.setState({ sortBy: SortOrder.DESCRIPTION_ASC })
-    } else {
-      this.setState({ sortBy: SortOrder.DESCRIPTION_ASC })
-    }
-  }
-
-  toggleStateSortOrder() {
-    if (this.state.sortBy == SortOrder.STATE_ASC) {
-      this.setState({ sortBy: SortOrder.STATE_DESC })
-    } else if (this.state.sortBy == SortOrder.STATE_DESC) {
-      this.setState({ sortBy: SortOrder.STATE_ASC })
-    } else {
-      this.setState({ sortBy: SortOrder.STATE_ASC })
+  toggleSortOrder(field) {
+    console.log("toggle:", field)
+    switch (field) {
+      case "name":
+        if (this.state.sortBy == SortOrder.NAME_ASC) {
+          this.setState({ sortBy: SortOrder.NAME_DESC })
+        } else if (this.state.sortBy == SortOrder.NAME_DESC) {
+          this.setState({ sortBy: SortOrder.NAME_ASC })
+        } else {
+          this.setState({ sortBy: SortOrder.NAME_ASC })
+        }
+        break;
+      case "description":
+        if (this.state.sortBy == SortOrder.DESCRIPTION_ASC) {
+          this.setState({ sortBy: SortOrder.DESCRIPTION_DESC })
+        } else if (this.state.sortBy == SortOrder.DESCRIPTION_DESC) {
+          this.setState({ sortBy: SortOrder.DESCRIPTION_ASC })
+        } else {
+          this.setState({ sortBy: SortOrder.DESCRIPTION_ASC })
+        }
+        break;
+      case "state":
+        if (this.state.sortBy == SortOrder.STATE_ASC) {
+          this.setState({ sortBy: SortOrder.STATE_DESC })
+        } else if (this.state.sortBy == SortOrder.STATE_DESC) {
+          this.setState({ sortBy: SortOrder.STATE_ASC })
+        } else {
+          this.setState({ sortBy: SortOrder.STATE_ASC })
+        }
+        break;
+      default:
+        break;
     }
   }
 
@@ -270,9 +276,9 @@ class UnitsList extends React.Component {
           <table className="table table-hover table-sm ">
             <thead className="thead-dark">
               <tr>
-                <th scope="col" onClick={this.toggleDescSortOrder.bind(this)} >Description</th>
-                <th scope="col" onClick={this.toggleNameSortOrder.bind(this)} >Name</th>
-                <th scope="col" onClick={this.toggleStateSortOrder.bind(this)} >State</th>
+                <th scope="col" onClick={this.toggleSortOrder.bind(this, "description")} >Description</th>
+                <th scope="col" onClick={this.toggleSortOrder.bind(this, "name")} >Name</th>
+                <th scope="col" onClick={this.toggleSortOrder.bind(this, "state")} >State</th>
                 {actionHeader}
               </tr>
             </thead>
