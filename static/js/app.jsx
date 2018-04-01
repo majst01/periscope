@@ -3,6 +3,14 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
 
+const SortOrder = {
+  NAME_ASC: 1,
+  NAME_DESC: 2,
+  DESCRIPTION_ASC: 3,
+  DESCRIPTION_DESC: 4,
+  STATE_ASC: 5,
+  STATE_DESC: 6
+}
 class UnitState extends React.Component {
   constructor(props) {
     super(props);
@@ -88,7 +96,8 @@ class UnitsList extends React.Component {
       units: [],
       readonly: false,
       filterString: "",
-      journal: []
+      journal: [],
+      sortBy: SortOrder.NAME_ASC
     };
   }
 
@@ -156,12 +165,68 @@ class UnitsList extends React.Component {
     this.setState({ filterString: e.target.value })
   }
 
+  toggleNameSortOrder() {
+    if (this.state.sortBy == SortOrder.NAME_ASC) {
+      this.setState({ sortBy: SortOrder.NAME_DESC })
+    } else if (this.state.sortBy == SortOrder.NAME_DESC) {
+      this.setState({ sortBy: SortOrder.NAME_ASC })
+    } else {
+      this.setState({ sortBy: SortOrder.NAME_ASC })
+    }
+  }
+  toggleDescSortOrder() {
+    if (this.state.sortBy == SortOrder.DESCRIPTION_ASC) {
+      this.setState({ sortBy: SortOrder.DESCRIPTION_DESC })
+    } else if (this.state.sortBy == SortOrder.DESCRIPTION_DESC) {
+      this.setState({ sortBy: SortOrder.DESCRIPTION_ASC })
+    } else {
+      this.setState({ sortBy: SortOrder.DESCRIPTION_ASC })
+    }
+  }
+
+  toggleStateSortOrder() {
+    if (this.state.sortBy == SortOrder.STATE_ASC) {
+      this.setState({ sortBy: SortOrder.STATE_DESC })
+    } else if (this.state.sortBy == SortOrder.STATE_DESC) {
+      this.setState({ sortBy: SortOrder.STATE_ASC })
+    } else {
+      this.setState({ sortBy: SortOrder.STATE_ASC })
+    }
+  }
+
   render() {
     const units = this.state.units.filter(unit => {
       return this.state.filterString.length < 3 || unit.Name.indexOf(this.state.filterString) >= 0
     }).sort((a, b) => {
-      if (a.Name.toLowerCase() < b.Name.toLowerCase()) return -1;
-      if (a.Name.toLowerCase() > b.Name.toLowerCase()) return 1;
+      switch (this.state.sortBy) {
+        case SortOrder.NAME_ASC:
+          if (a.Name.toLowerCase() < b.Name.toLowerCase()) return -1;
+          if (a.Name.toLowerCase() > b.Name.toLowerCase()) return 1;
+          break;
+        case SortOrder.NAME_DESC:
+          if (a.Name.toLowerCase() < b.Name.toLowerCase()) return 1;
+          if (a.Name.toLowerCase() > b.Name.toLowerCase()) return -1;
+          break;
+        case SortOrder.DESCRIPTION_ASC:
+          if (a.Description.toLowerCase() < b.Description.toLowerCase()) return -1;
+          if (a.Description.toLowerCase() > b.Description.toLowerCase()) return 1;
+          break;
+        case SortOrder.DESCRIPTION_DESC:
+          if (a.Description.toLowerCase() < b.Description.toLowerCase()) return 1;
+          if (a.Description.toLowerCase() > b.Description.toLowerCase()) return -1;
+          break;
+        case SortOrder.STATE_ASC:
+          if (a.SubState.toLowerCase() < b.SubState.toLowerCase()) return -1;
+          if (a.SubState.toLowerCase() > b.SubState.toLowerCase()) return 1;
+          break;
+        case SortOrder.STATE_DESC:
+          if (a.SubState.toLowerCase() < b.SubState.toLowerCase()) return 1;
+          if (a.SubState.toLowerCase() > b.SubState.toLowerCase()) return -1;
+          break;
+
+        default:
+          break;
+      }
       return 0;
     })
       .map((unit, i) => {
@@ -205,9 +270,9 @@ class UnitsList extends React.Component {
           <table className="table table-hover table-sm ">
             <thead className="thead-dark">
               <tr>
-                <th scope="col">Description</th>
-                <th scope="col">Name</th>
-                <th scope="col">State</th>
+                <th scope="col" onClick={this.toggleDescSortOrder.bind(this)} >Description</th>
+                <th scope="col" onClick={this.toggleNameSortOrder.bind(this)} >Name</th>
+                <th scope="col" onClick={this.toggleStateSortOrder.bind(this)} >State</th>
                 {actionHeader}
               </tr>
             </thead>
