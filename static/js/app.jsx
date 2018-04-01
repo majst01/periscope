@@ -71,9 +71,13 @@ class UnitsItem extends React.Component {
     }
     return (
       <tr>
-        <td>{this.props.Unit.Description}</td>
         <td>
-          <a href="#" className="badge badge-light" onClick={this.doUnit(this.props.Unit.Name, "describe")}>{this.props.Unit.Name}</a>
+          <span className="d-inline-block text-truncate" style={{ "maxWidth": "500px" }}>{this.props.Unit.Description}</span>
+        </td>
+        <td>
+          <span className="d-inline-block text-truncate" style={{ "maxWidth": "500px" }}>
+            <a href="#" className="badge badge-light" onClick={this.doUnit(this.props.Unit.Name, "describe")}>{this.props.Unit.Name}</a>
+          </span>
         </td>
         <td>
           <UnitState Unit={this.props.Unit} />
