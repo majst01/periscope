@@ -13,3 +13,6 @@ services:
     volumes:
      - /var/run/dbus:/var/run/dbus
      - /run/systemd/private:/run/systemd/private
+     - /var/log/journal:/var/log/journal
+     - /run/log/journal:/run/log/journal
+     - /etc/machine-id:/etc/machine-id
