@@ -7,11 +7,12 @@
     "axios": "^0.18.0",
     "bootstrap": "^4.0.0",
     "jquery": "^3.3.1",
+    "npm-check-updates": "^2.14.1",
     "popper.js": "^1.14.1",
     "prop-types": "^15.6.1",
-    "react": "^16.2.0",
+    "react": "^16.3.0",
     "react-bootstrap": "^0.32.1",
-    "react-dom": "^16.2.0"
+    "react-dom": "^16.3.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -21,7 +22,7 @@
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.11",
     "style-loader": "^0.20.3",
-    "webpack": "^4.1.1",
+    "webpack": "^4.4.1",
     "webpack-cli": "^2.0.13",
     "webpack-combine-loaders": "^2.0.3"
   },
