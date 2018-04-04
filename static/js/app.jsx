@@ -1,3 +1,4 @@
+'use strict';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
@@ -16,7 +17,7 @@ class UnitState extends React.Component {
     super(props);
   }
   getStateClass(state) {
-    var result = "btn btn-primary"
+    let result = "btn btn-primary"
     switch (state) {
       case "loaded":
       case "active":
@@ -42,9 +43,9 @@ class UnitState extends React.Component {
     return result
   }
   render() {
-    var loadStateBadge = this.getStateClass(this.props.Unit.LoadState)
-    var activeStateBadge = this.getStateClass(this.props.Unit.ActiveState)
-    var subStateBadge = this.getStateClass(this.props.Unit.SubState)
+    let loadStateBadge = this.getStateClass(this.props.Unit.LoadState)
+    let activeStateBadge = this.getStateClass(this.props.Unit.ActiveState)
+    let subStateBadge = this.getStateClass(this.props.Unit.SubState)
     return (
       <div className="btn-group btn-group-sm" role="group" aria-label="Unit Status">
         <button type="button" className={loadStateBadge} >{this.props.Unit.LoadState}</button>
@@ -57,7 +58,7 @@ class UnitState extends React.Component {
 
 class UnitsItem extends React.Component {
   render() {
-    var buttonGroup = (
+    let buttonGroup = (
       <td>
         <div className="btn-group" role="group" aria-label="Unit Actions">
           <button type="button" className="btn btn-danger btn-sm" onClick={this.doUnit(this.props.Unit.Name, "stop")}>Stop</button>
@@ -249,6 +250,11 @@ class UnitsList extends React.Component {
       });
 
     const journalRows = this.state.journal.map((j, i) => {
+      if (this.state.journal.length <= 1) {
+        return (
+          <tr key="0"><td>No journal entries</td></tr>
+        )
+      }
       return (
         <tr key={i}><td>{j}</td></tr>
       );
@@ -262,6 +268,7 @@ class UnitsList extends React.Component {
     )
 
     return (
+      <React.StrictMode>
       <div className="container-fluid">
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
           <a className="navbar-brand" href="#">Systemd Units</a>
@@ -291,9 +298,9 @@ class UnitsList extends React.Component {
             </tbody>
           </table>
         </div>
-        <div className="card fixed-bottom">
+        <div className="card fixed-bottom" style={{height: "20%"}}>
           <div className="card-header">Journal</div>
-          <div className="card-body">
+          <div className="card-body" style={{ overflowY: "auto"}}>
             <table>
               <tbody>
                 {journalRows}
@@ -302,6 +309,7 @@ class UnitsList extends React.Component {
           </div>
         </div>
       </div>
+      </React.StrictMode>
     );
   }
 }

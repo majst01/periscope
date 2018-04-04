@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
-	"time"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -23,6 +22,7 @@ var (
 // ListenAndServe starts the listener with appropriate parameters from Specification
 func ListenAndServe(spec Specification) error {
 	dbc, err := dbus.New()
+	defer dbc.Close()
 	if err != nil {
 		log.Fatalf("unable to connect to dbus: %v", err)
 	}
@@ -44,6 +44,7 @@ func ListenAndServe(spec Specification) error {
 	e.GET("/units", p.UnitsHandler)
 	e.GET("/unit", p.UnitHandler)
 	e.GET("/journal", p.JournalHandler)
+	e.POST("/login", p.LoginHandler)
 	e.GET("/readonly", p.ReadonlyHandler)
 	e.Static("/", "static")
 
@@ -180,7 +181,7 @@ func (p *Periscope) getJournal(name string) ([]string, error) {
 	var journal []string
 	journalReader, err := sdjournal.NewJournalReader(
 		sdjournal.JournalReaderConfig{
-			Since: time.Duration(-10) * time.Hour,
+			NumFromTail: 100,
 			Matches: []sdjournal.Match{
 				{
 					Field: sdjournal.SD_JOURNAL_FIELD_SYSTEMD_UNIT,
@@ -205,4 +206,16 @@ func (p *Periscope) getJournal(name string) ([]string, error) {
 		log.WithFields(log.Fields{"service": name, "journal": entry}).Debug("getJournal")
 	}
 	return journal, nil
+}
+
+// LoginHandler check if user and password are correct.
+func (p *Periscope) LoginHandler(c echo.Context) error {
+	username := c.FormValue("username")
+	password := c.FormValue("password")
+	log.WithFields(log.Fields{"username": username, "password": password}).Info("loginhandler")
+	if len(username) < 1 || len(password) < 1 {
+		return c.JSON(http.StatusForbidden, false)
+	}
+
+	return c.JSON(http.StatusOK, true)
 }
