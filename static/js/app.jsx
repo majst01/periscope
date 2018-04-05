@@ -16,45 +16,30 @@ const SortOrder = {
   STATE_ASC: 5,
   STATE_DESC: 6
 }
+
+const ServiceState = {
+  loaded: "success",
+  active: "success",
+  inactive: "warning",
+  dead: "danger",
+  running: "success",
+  mounted: "success",
+  waiting: "warning",
+  failed: "danger",
+  "not-found": "primary"
+}
+
 class UnitState extends React.Component {
   constructor(props) {
     super(props);
   }
-  getStateClass(state) {
-    let result = "primary"
-    switch (state) {
-      case "loaded":
-      case "active":
-        result = "success"
-        break;
-      case "inactive":
-        result = "warning"
-        break;
-      case "dead":
-        result = "danger"
-        break;
-      case "running":
-      case "mounted":
-        result = "success"
-        break;
-      case "waiting":
-        result = "warning"
-        break;
-      default:
-        result = "warning"
-        break;
-    }
-    return result
-  }
+
   render() {
-    let loadStateBadge = this.getStateClass(this.props.Unit.LoadState)
-    let activeStateBadge = this.getStateClass(this.props.Unit.ActiveState)
-    let subStateBadge = this.getStateClass(this.props.Unit.SubState)
     return (
       <ButtonGroup size="sm" aria-label="Unit Status">
-        <Button color={loadStateBadge}>{this.props.Unit.LoadState}</Button>
-        <Button color={activeStateBadge} >{this.props.Unit.ActiveState}</Button>
-        <Button color={subStateBadge} >{this.props.Unit.SubState}</Button>
+        <Button color={ServiceState[this.props.Unit.LoadState]}>{this.props.Unit.LoadState}</Button>
+        <Button color={ServiceState[this.props.Unit.ActiveState]} >{this.props.Unit.ActiveState}</Button>
+        <Button color={ServiceState[this.props.Unit.SubState]} >{this.props.Unit.SubState}</Button>
       </ButtonGroup>
     )
   }
