@@ -26,6 +26,10 @@ const ServiceState = {
   mounted: "success",
   waiting: "warning",
   failed: "danger",
+  exited: "success",
+  elapsed: "success",
+  listening: "success",
+  plugged: "success",
   "not-found": "primary"
 }
 
