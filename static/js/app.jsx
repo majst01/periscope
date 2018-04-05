@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Button, ButtonGroup,
+import { Alert, Button, ButtonGroup,
          Card, CardHeader, CardBody,
          Container, Form, Input,
          Navbar, NavbarBrand, Table } from 'reactstrap';
@@ -95,8 +95,12 @@ class UnitsList extends React.Component {
       readonly: false,
       filterString: "",
       journal: [],
-      sortBy: SortOrder.NAME_ASC
+      sortBy: SortOrder.NAME_ASC,
+      journalVisible: false,
+      serviceName: ""
     };
+
+    this.onDismiss = this.onDismiss.bind(this);
   }
 
   componentDidMount() {
@@ -141,7 +145,11 @@ class UnitsList extends React.Component {
           })
           .then(function (response) {
             console.log("journal:", response)
-            self.setState({ journal: response.data })
+            self.setState({
+              journal: response.data,
+              journalVisible: true,
+              serviceName: name
+            })
           });
     }
     let self = this
@@ -196,6 +204,10 @@ class UnitsList extends React.Component {
       default:
         break;
     }
+  }
+
+  onDismiss() {
+    this.setState({ journalVisible: false });
   }
 
   render() {
@@ -287,12 +299,12 @@ class UnitsList extends React.Component {
             {units}
           </tbody>
         </Table>
-        <Card className="fixed-bottom" style={{height: "20%"}}>
-          <CardHeader>Journal</CardHeader>
-          <CardBody style={{ overflowY: "auto"}}>
+        <Alert color="success" className="fixed-bottom" style={{height: "20%"}} isOpen={this.state.journalVisible} toggle={this.onDismiss}>
+          <h4 className="alert-heading">Journal of {this.state.serviceName}</h4>
+          <div  style={{ height: "80%", overflowY: "auto"}}>
             {journalRows}
-          </CardBody>
-        </Card>
+          </div>
+        </Alert>
       </Container>
       </React.StrictMode>
     );
