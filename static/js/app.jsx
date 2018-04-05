@@ -1,6 +1,10 @@
 'use strict';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Button, ButtonGroup,
+         Card, CardHeader, CardBody,
+         Container, Form, Input,
+         Navbar, NavbarBrand, Table } from 'reactstrap';
 import axios from 'axios';
 import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
 
@@ -17,27 +21,27 @@ class UnitState extends React.Component {
     super(props);
   }
   getStateClass(state) {
-    let result = "btn btn-primary"
+    let result = "primary"
     switch (state) {
       case "loaded":
       case "active":
-        result = "btn btn-success"
+        result = "success"
         break;
       case "inactive":
-        result = "btn btn-warning"
+        result = "warning"
         break;
       case "dead":
-        result = "btn btn-danger"
+        result = "danger"
         break;
       case "running":
       case "mounted":
-        result = "btn btn-success"
+        result = "success"
         break;
       case "waiting":
-        result = "btn btn-warning"
+        result = "warning"
         break;
       default:
-        result = "btn btn-warning"
+        result = "warning"
         break;
     }
     return result
@@ -47,11 +51,11 @@ class UnitState extends React.Component {
     let activeStateBadge = this.getStateClass(this.props.Unit.ActiveState)
     let subStateBadge = this.getStateClass(this.props.Unit.SubState)
     return (
-      <div className="btn-group btn-group-sm" role="group" aria-label="Unit Status">
-        <button type="button" className={loadStateBadge} >{this.props.Unit.LoadState}</button>
-        <button type="button" className={activeStateBadge} >{this.props.Unit.ActiveState}</button>
-        <button type="button" className={subStateBadge} >{this.props.Unit.SubState}</button>
-      </div>
+      <ButtonGroup size="sm" aria-label="Unit Status">
+        <Button color={loadStateBadge}>{this.props.Unit.LoadState}</Button>
+        <Button color={activeStateBadge} >{this.props.Unit.ActiveState}</Button>
+        <Button color={subStateBadge} >{this.props.Unit.SubState}</Button>
+      </ButtonGroup>
     )
   }
 }
@@ -60,11 +64,11 @@ class UnitsItem extends React.Component {
   render() {
     let buttonGroup = (
       <td>
-        <div className="btn-group" role="group" aria-label="Unit Actions">
-          <button type="button" className="btn btn-danger btn-sm" onClick={this.doUnit(this.props.Unit.Name, "stop")}>Stop</button>
-          <button type="button" className="btn btn-success btn-sm" onClick={this.doUnit(this.props.Unit.Name, "start")}>Start</button>
-          <button type="button" className="btn btn-warning btn-sm" onClick={this.doUnit(this.props.Unit.Name, "restart")}>Restart</button>
-        </div>
+        <ButtonGroup size="sm" aria-label="Unit Actions">
+          <Button color="danger" onClick={this.doUnit(this.props.Unit.Name, "stop")}>Stop</Button>
+          <Button color="success" onClick={this.doUnit(this.props.Unit.Name, "start")}>Start</Button>
+          <Button color="warning" onClick={this.doUnit(this.props.Unit.Name, "restart")}>Restart</Button>
+        </ButtonGroup>
       </td>
     )
     if (this.props.readonly) {
@@ -252,11 +256,11 @@ class UnitsList extends React.Component {
     const journalRows = this.state.journal.map((j, i) => {
       if (this.state.journal.length <= 1) {
         return (
-          <tr key="0"><td>No journal entries</td></tr>
+          <p key="0">No journal entries</p>
         )
       }
       return (
-        <tr key={i}><td>{j}</td></tr>
+        <p key={i}>{j}</p>
       );
     });
 
@@ -269,46 +273,38 @@ class UnitsList extends React.Component {
 
     return (
       <React.StrictMode>
-      <div className="container-fluid">
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-          <a className="navbar-brand" href="#">Systemd Units</a>
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <form className="form-inline my-2 my-lg-0">
-              <input className="form-control mr-sm-2"
-                type="search"
-                placeholder="Filter Service"
-                id="filter"
-                value={this.state.filterString}
-                onChange={this.onFilter.bind(this)}></input>
-            </form>
-          </div>
-        </nav>
-        <div>
-          <table className="table table-hover table-sm ">
-            <thead className="thead-dark">
-              <tr>
-                <th scope="col" onClick={this.toggleSortOrder.bind(this, "description")} >Description</th>
-                <th scope="col" onClick={this.toggleSortOrder.bind(this, "name")} >Name</th>
-                <th scope="col" onClick={this.toggleSortOrder.bind(this, "state")} >State</th>
-                {actionHeader}
-              </tr>
-            </thead>
-            <tbody>
-              {units}
-            </tbody>
-          </table>
-        </div>
-        <div className="card fixed-bottom" style={{height: "20%"}}>
-          <div className="card-header">Journal</div>
-          <div className="card-body" style={{ overflowY: "auto"}}>
-            <table>
-              <tbody>
-                {journalRows}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+      <Container fluid>
+        <Navbar color="light" light expand="lg">
+          <NavbarBrand href="#">Systemd Units</NavbarBrand>
+          <Form>
+            <Input
+              type="search"
+              placeholder="Filter Service"
+              id="filter"
+              value={this.state.filterString}
+              onChange={this.onFilter.bind(this)}></Input>
+          </Form>
+        </Navbar>
+        <Table hover size="sm">
+          <thead className="thead-dark">
+            <tr>
+              <th scope="col" onClick={this.toggleSortOrder.bind(this, "description")} >Description</th>
+              <th scope="col" onClick={this.toggleSortOrder.bind(this, "name")} >Name</th>
+              <th scope="col" onClick={this.toggleSortOrder.bind(this, "state")} >State</th>
+              {actionHeader}
+            </tr>
+          </thead>
+          <tbody>
+            {units}
+          </tbody>
+        </Table>
+        <Card className="fixed-bottom" style={{height: "20%"}}>
+          <CardHeader>Journal</CardHeader>
+          <CardBody style={{ overflowY: "auto"}}>
+            {journalRows}
+          </CardBody>
+        </Card>
+      </Container>
       </React.StrictMode>
     );
   }

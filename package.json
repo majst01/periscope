@@ -10,9 +10,10 @@
     "npm-check-updates": "^2.14.1",
     "popper.js": "^1.14.1",
     "prop-types": "^15.6.1",
-    "react": "^16.3.0",
+    "react": "^16.3.1",
     "react-bootstrap": "^0.32.1",
-    "react-dom": "^16.3.0"
+    "react-dom": "^16.3.1",
+    "reactstrap": "^5.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
