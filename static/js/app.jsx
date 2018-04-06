@@ -173,35 +173,27 @@ class UnitsList extends React.Component {
     this.setState({ filterString: e.target.value })
   }
 
+  toggleSortBy(a, b) {
+    if (this.state.sortBy == a) {
+      this.setState({ sortBy: b })
+    } else if (this.state.sortBy == b) {
+      this.setState({ sortBy: a })
+    } else {
+      this.setState({ sortBy: a })
+    }
+  }
+
   toggleSortOrder(field) {
     console.log("toggle:", field)
     switch (field) {
       case "name":
-        if (this.state.sortBy == SortOrder.NAME_ASC) {
-          this.setState({ sortBy: SortOrder.NAME_DESC })
-        } else if (this.state.sortBy == SortOrder.NAME_DESC) {
-          this.setState({ sortBy: SortOrder.NAME_ASC })
-        } else {
-          this.setState({ sortBy: SortOrder.NAME_ASC })
-        }
+        this.toggleSortBy(SortOrder.NAME_ASC, SortOrder.NAME_DESC)
         break;
       case "description":
-        if (this.state.sortBy == SortOrder.DESCRIPTION_ASC) {
-          this.setState({ sortBy: SortOrder.DESCRIPTION_DESC })
-        } else if (this.state.sortBy == SortOrder.DESCRIPTION_DESC) {
-          this.setState({ sortBy: SortOrder.DESCRIPTION_ASC })
-        } else {
-          this.setState({ sortBy: SortOrder.DESCRIPTION_ASC })
-        }
-        break;
+        this.toggleSortBy(SortOrder.DESCRIPTION_ASC, SortOrder.DESCRIPTION_DESC)
+      break;
       case "state":
-        if (this.state.sortBy == SortOrder.STATE_ASC) {
-          this.setState({ sortBy: SortOrder.STATE_DESC })
-        } else if (this.state.sortBy == SortOrder.STATE_DESC) {
-          this.setState({ sortBy: SortOrder.STATE_ASC })
-        } else {
-          this.setState({ sortBy: SortOrder.STATE_ASC })
-        }
+        this.toggleSortBy(SortOrder.STATE_ASC, SortOrder.STATE_DESC)
         break;
       default:
         break;
@@ -212,42 +204,45 @@ class UnitsList extends React.Component {
     this.setState({ journalVisible: false });
   }
 
+  sortStringsOnLowerCase(a, b, reverse) {
+    if (!reverse) {
+      if (a.toLowerCase() < b.toLowerCase()) return -1;
+      if (a.toLowerCase() > b.toLowerCase()) return 1;
+    } else {
+      if (a.toLowerCase() < b.toLowerCase()) return 1;
+      if (a.toLowerCase() > b.toLowerCase()) return -1;
+    }
+  }
+
   render() {
     const units = this.state.units.filter(unit => {
       return this.state.filterString.length < 3 || unit.Name.indexOf(this.state.filterString) >= 0
     }).sort((a, b) => {
       switch (this.state.sortBy) {
         case SortOrder.NAME_ASC:
-          if (a.Name.toLowerCase() < b.Name.toLowerCase()) return -1;
-          if (a.Name.toLowerCase() > b.Name.toLowerCase()) return 1;
+          return this.sortStringsOnLowerCase(a.Name, b.Name, false)
           break;
         case SortOrder.NAME_DESC:
-          if (a.Name.toLowerCase() < b.Name.toLowerCase()) return 1;
-          if (a.Name.toLowerCase() > b.Name.toLowerCase()) return -1;
+          return this.sortStringsOnLowerCase(a.Name, b.Name, true)
           break;
         case SortOrder.DESCRIPTION_ASC:
-          if (a.Description.toLowerCase() < b.Description.toLowerCase()) return -1;
-          if (a.Description.toLowerCase() > b.Description.toLowerCase()) return 1;
+          return this.sortStringsOnLowerCase(a.Description, b.Description, false)
           break;
         case SortOrder.DESCRIPTION_DESC:
-          if (a.Description.toLowerCase() < b.Description.toLowerCase()) return 1;
-          if (a.Description.toLowerCase() > b.Description.toLowerCase()) return -1;
+          return this.sortStringsOnLowerCase(a.Description, b.Description, true)
           break;
         case SortOrder.STATE_ASC:
-          if (a.SubState.toLowerCase() < b.SubState.toLowerCase()) return -1;
-          if (a.SubState.toLowerCase() > b.SubState.toLowerCase()) return 1;
+          return this.sortStringsOnLowerCase(a.SubState, b.SubState, false)
           break;
         case SortOrder.STATE_DESC:
-          if (a.SubState.toLowerCase() < b.SubState.toLowerCase()) return 1;
-          if (a.SubState.toLowerCase() > b.SubState.toLowerCase()) return -1;
+        return this.sortStringsOnLowerCase(a.SubState, b.SubState, true)
           break;
 
         default:
           break;
       }
       return 0;
-    })
-      .map((unit, i) => {
+    }).map((unit, i) => {
         return (
           <UnitsItem key={i}
             Unit={unit}
