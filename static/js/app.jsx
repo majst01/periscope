@@ -1,10 +1,12 @@
 'use strict';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Alert, Button, ButtonGroup,
-         Card, CardHeader, CardBody,
-         Container, Form, Input,
-         Navbar, NavbarBrand, Table } from 'reactstrap';
+import {
+  Alert, Button, ButtonGroup,
+  Card, CardHeader, CardBody,
+  Container, Form, Input,
+  Navbar, NavbarBrand, Table
+} from 'reactstrap';
 import axios from 'axios';
 import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
 
@@ -274,38 +276,38 @@ class UnitsList extends React.Component {
 
     return (
       <React.StrictMode>
-      <Container fluid>
-        <Navbar color="light" light expand="lg">
-          <NavbarBrand href="#">Systemd Units</NavbarBrand>
-          <Form>
-            <Input
-              type="search"
-              placeholder="Filter Service"
-              id="filter"
-              value={this.state.filterString}
-              onChange={this.onFilter.bind(this)}></Input>
-          </Form>
-        </Navbar>
-        <Table hover size="sm">
-          <thead className="thead-dark">
-            <tr>
-              <th scope="col" onClick={this.toggleSortOrder.bind(this, "description")} >Description</th>
-              <th scope="col" onClick={this.toggleSortOrder.bind(this, "name")} >Name</th>
-              <th scope="col" onClick={this.toggleSortOrder.bind(this, "state")} >State</th>
-              {actionHeader}
-            </tr>
-          </thead>
-          <tbody>
-            {units}
-          </tbody>
-        </Table>
-        <Alert color="success" className="fixed-bottom" style={{height: "20%"}} isOpen={this.state.journalVisible} toggle={this.onDismiss}>
-          <h4 className="alert-heading">Journal of {this.state.serviceName}</h4>
-          <div  style={{ height: "80%", overflowY: "auto"}}>
-            {journalRows}
-          </div>
-        </Alert>
-      </Container>
+        <Container fluid>
+          <Navbar color="light" light expand="lg">
+            <NavbarBrand href="#">Systemd Units</NavbarBrand>
+            <Form>
+              <Input
+                type="search"
+                placeholder="Filter Service"
+                id="filter"
+                value={this.state.filterString}
+                onChange={this.onFilter.bind(this)}></Input>
+            </Form>
+          </Navbar>
+          <Table hover size="sm">
+            <thead className="thead-dark">
+              <tr>
+                <th scope="col" onClick={this.toggleSortOrder.bind(this, "description")} >Description</th>
+                <th scope="col" onClick={this.toggleSortOrder.bind(this, "name")} >Name</th>
+                <th scope="col" onClick={this.toggleSortOrder.bind(this, "state")} >State</th>
+                {actionHeader}
+              </tr>
+            </thead>
+            <tbody>
+              {units}
+            </tbody>
+          </Table>
+          <Alert color="success" className="fixed-bottom" style={{ height: "20%" }} isOpen={this.state.journalVisible} toggle={this.onDismiss}>
+            <h4 className="alert-heading">Journal of {this.state.serviceName}</h4>
+            <div style={{ height: "80%", overflowY: "auto" }}>
+              {journalRows}
+            </div>
+          </Alert>
+        </Container>
       </React.StrictMode>
     );
   }
