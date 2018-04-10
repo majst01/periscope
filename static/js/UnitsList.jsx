@@ -3,9 +3,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import axios from 'axios';
-import { Card, CardHeader, CardBody,
-         Container, Form, Input,
-         Navbar, NavbarBrand, Table } from 'reactstrap';
+import {
+  Card, CardHeader, CardBody,
+  Container, Form, Input,
+  Navbar, NavbarBrand, Table
+} from 'reactstrap';
 
 import UnitsItem from './UnitsItem.jsx';
 
@@ -98,7 +100,7 @@ export default class UnitsList extends React.Component {
         break;
       case "description":
         this.toggleSortBy(SortOrder.DESCRIPTION_ASC, SortOrder.DESCRIPTION_DESC)
-      break;
+        break;
       case "state":
         this.toggleSortBy(SortOrder.STATE_ASC, SortOrder.STATE_DESC)
         break;
@@ -138,7 +140,7 @@ export default class UnitsList extends React.Component {
           return this.sortStringsOnLowerCase(a.SubState, b.SubState, false)
           break;
         case SortOrder.STATE_DESC:
-        return this.sortStringsOnLowerCase(a.SubState, b.SubState, true)
+          return this.sortStringsOnLowerCase(a.SubState, b.SubState, true)
           break;
 
         default:
@@ -146,13 +148,13 @@ export default class UnitsList extends React.Component {
       }
       return 0;
     }).map((unit, i) => {
-        return (
-          <UnitsItem key={i}
-            Unit={unit}
-            onUnitClicked={this.onUnitClicked.bind(this)}
-            readonly={this.state.readonly.data} />
-        );
-      });
+      return (
+        <UnitsItem key={i}
+          Unit={unit}
+          onUnitClicked={this.onUnitClicked.bind(this)}
+          readonly={this.state.readonly.data} />
+      );
+    });
 
     let actionHeader = (
       <th scope="col">Action</th>
@@ -163,32 +165,32 @@ export default class UnitsList extends React.Component {
 
     return (
       <React.StrictMode>
-      <Container fluid>
-        <Navbar color="light" light expand="lg">
-          <NavbarBrand href="#">Systemd Units</NavbarBrand>
-          <Form>
-            <Input
-              type="search"
-              placeholder="Filter Service"
-              id="filter"
-              value={this.state.filterString}
-              onChange={this.onFilter.bind(this)}></Input>
-          </Form>
-        </Navbar>
-        <Table hover size="sm">
-          <thead className="thead-dark">
-            <tr>
-              <th scope="col" onClick={this.toggleSortOrder.bind(this, "description")} >Description</th>
-              <th scope="col" onClick={this.toggleSortOrder.bind(this, "name")} >Name</th>
-              <th scope="col" onClick={this.toggleSortOrder.bind(this, "state")} >State</th>
-              {actionHeader}
-            </tr>
-          </thead>
-          <tbody>
-            {units}
-          </tbody>
-        </Table>
-      </Container>
+        <Container fluid>
+          <Navbar color="light" light expand="lg">
+            <NavbarBrand href="#">Systemd Units</NavbarBrand>
+            <Form>
+              <Input
+                type="search"
+                placeholder="Filter Service"
+                id="filter"
+                value={this.state.filterString}
+                onChange={this.onFilter.bind(this)}></Input>
+            </Form>
+          </Navbar>
+          <Table hover size="sm">
+            <thead className="thead-dark">
+              <tr>
+                <th scope="col" onClick={this.toggleSortOrder.bind(this, "description")} >Description</th>
+                <th scope="col" onClick={this.toggleSortOrder.bind(this, "name")} >Name</th>
+                <th scope="col" onClick={this.toggleSortOrder.bind(this, "state")} >State</th>
+                {actionHeader}
+              </tr>
+            </thead>
+            <tbody>
+              {units}
+            </tbody>
+          </Table>
+        </Container>
       </React.StrictMode>
     );
   }

@@ -21,9 +21,9 @@ class App extends React.Component {
         this.escFunction = this.escFunction.bind(this);
     }
 
-    escFunction(event){
-        if(event.keyCode === 27) {
-            this.setState({consoleVisible: false})
+    escFunction(event) {
+        if (event.keyCode === 27) {
+            this.setState({ consoleVisible: false })
             document.removeEventListener("keydown", this.escFunction, false);
         }
     }
@@ -41,27 +41,27 @@ class App extends React.Component {
     }
 
     render() {
-        var s = {'display': 'none'}
+        var s = { 'display': 'none' }
         var size = '0%'
-        var rs = {'height': 0}
+        var rs = { 'height': 0 }
 
         if (this.state.consoleVisible === true) {
-            s = {'overflowX': 'hidden !important'}
+            s = { 'overflowX': 'hidden !important' }
             size = '25%'
             rs = {}
         }
 
-        return ( 
+        return (
             <SplitPane
                 split="horizontal"
                 primary="second"
                 defaultSize={size}
-                pane1Style={{'overflowY': 'scroll'}}
+                pane1Style={{ 'overflowY': 'scroll' }}
                 resizerStyle={rs}>
 
                 <UnitsList showConsole={this.showConsole} />
                 <LazyLog
-                    url={ "/journal?name=" + this.state.serviceName }
+                    url={"/journal?name=" + this.state.serviceName}
                     stream
                     selectableLines
                     follow
