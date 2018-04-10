@@ -1,18 +1,23 @@
 'use strict';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Button, ButtonGroup } from 'reactstrap';
+import { Button, ButtonGroup, ButtonToolbar } from 'reactstrap';
 import UnitState from './UnitState.jsx';
 
 export default class UnitsItem extends React.Component {
   render() {
     let buttonGroup = (
       <td>
-        <ButtonGroup size="sm" aria-label="Unit Actions">
-          <Button color="danger" onClick={this.doUnit(this.props.Unit.Name, "stop")}>Stop</Button>
-          <Button color="success" onClick={this.doUnit(this.props.Unit.Name, "start")}>Start</Button>
-          <Button color="warning" onClick={this.doUnit(this.props.Unit.Name, "restart")}>Restart</Button>
-        </ButtonGroup>
+        <ButtonToolbar>
+          <ButtonGroup size="sm" aria-label="Unit Actions">
+            <Button color="danger" onClick={this.doUnit(this.props.Unit.Name, "stop")}>Stop</Button>
+            <Button color="success" onClick={this.doUnit(this.props.Unit.Name, "start")}>Start</Button>
+            <Button color="warning" onClick={this.doUnit(this.props.Unit.Name, "restart")}>Restart</Button>
+          </ButtonGroup>
+          <ButtonGroup size="sm" style={{ 'marginLeft': '5px' }}>
+            <Button color="info" onClick={this.doUnit(this.props.Unit.Name, "describe")}>View Journal</Button>
+          </ButtonGroup>
+        </ButtonToolbar>
       </td>
     )
     if (this.props.readonly) {
