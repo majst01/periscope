@@ -1,11 +1,12 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"regexp"
-	"strings"
+	"time"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -130,12 +131,62 @@ func (p *Periscope) JournalHandler(c echo.Context) error {
 		log.WithFields(log.Fields{"service": name, "does not match servicepattern": p.spec.ServicePattern}).Warn("journalhandler")
 		return c.JSON(http.StatusForbidden, "given unit does not match servicepattern")
 	}
-	journal, err := p.getJournal(name)
+
+	r, err := p.getJournal(name)
 	if err != nil {
 		log.WithFields(log.Fields{"service": name, "error": err, "message": "reading journal failed"}).Error("journalhandler")
 		return c.JSON(http.StatusInternalServerError, err)
 	}
-	return c.JSON(http.StatusOK, journal)
+
+	pr, pw := io.Pipe()
+	until := make(chan time.Time)
+	go func() {
+		ctx := c.Request().Context()
+		select {
+		case t := <-time.After(time.Duration(15) * time.Minute):
+			until <- t
+			log.Println("stop following because of timeout")
+		case _ = <-ctx.Done():
+			if ctx.Err() == context.Canceled {
+				until <- time.Now()
+				log.Println("stop following because of cancellation")
+			}
+		}
+	}()
+
+	go func() {
+		if err = r.Follow(until, pw); err != sdjournal.ErrExpired {
+			log.Fatalf("Error during follow: %s", err)
+		}
+		pw.Close()
+	}()
+
+	c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextPlain)
+	c.Response().WriteHeader(http.StatusOK)
+	writeOutput(c.Response().Writer, pr)
+
+	return nil
+}
+
+func writeOutput(w http.ResponseWriter, r io.ReadCloser) {
+	buffer := make([]byte, 1024)
+	for {
+		n, err := r.Read(buffer)
+		if err != nil {
+			r.Close()
+			break
+		}
+
+		data := buffer[0:n]
+		w.Write(data)
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
+
+		for i := 0; i < n; i++ {
+			buffer[i] = 0
+		}
+	}
 }
 
 // ReadonlyHandler returns the readonly status
@@ -172,13 +223,12 @@ func (p *Periscope) getUnits() ([]dbus.UnitStatus, error) {
 	return result, nil
 }
 
-func (p *Periscope) getJournal(name string) ([]string, error) {
+func (p *Periscope) getJournal(name string) (*sdjournal.JournalReader, error) {
 	if !serviceRegex.Match([]byte(name)) {
 		log.WithFields(log.Fields{"service": name, "does not match servicepattern": p.spec.ServicePattern}).Warn("getjournal")
 		return nil, fmt.Errorf("given unit does not match servicepattern")
 	}
 
-	var journal []string
 	journalReader, err := sdjournal.NewJournalReader(
 		sdjournal.JournalReaderConfig{
 			NumFromTail: 100,
@@ -190,22 +240,13 @@ func (p *Periscope) getJournal(name string) ([]string, error) {
 			},
 		})
 	if err != nil {
-		return journal, fmt.Errorf("Error opening journal: %s", err)
+		return nil, fmt.Errorf("Error opening journal: %s", err)
 	}
 	if journalReader == nil {
-		return journal, fmt.Errorf("Got a nil reader")
+		return nil, fmt.Errorf("Got a nil reader")
 	}
-	defer journalReader.Close()
 
-	buff, err := ioutil.ReadAll(journalReader)
-	if err != nil {
-		return journal, fmt.Errorf("reading all from journal failed: %v", err)
-	}
-	journal = strings.Split(string(buff), "\n")
-	for _, entry := range journal {
-		log.WithFields(log.Fields{"service": name, "journal": entry}).Debug("getJournal")
-	}
-	return journal, nil
+	return journalReader, nil
 }
 
 // LoginHandler check if user and password are correct.
