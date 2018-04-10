@@ -41,14 +41,27 @@ class App extends React.Component {
     }
 
     render() {
-        var s = { 'display': 'none' }
-        var size = '0%'
-        var rs = { 'height': 0 }
+        let s = { 'display': 'none' }
+        let size = '0%'
+        let rs = { 'height': 0 }
 
         if (this.state.consoleVisible === true) {
             s = { 'overflowX': 'hidden !important' }
             size = '25%'
             rs = {}
+        }
+
+        let journalPane = (
+            <LazyLog
+                url={"/journal?name=" + this.state.serviceName}
+                stream
+                selectableLines
+                follow
+                style={s} />
+        )
+
+        if (this.state.serviceName === null || this.state.serviceName === "") {
+            journalPane = <h4 style={s}>No Service selected</h4>
         }
 
         return (
@@ -60,12 +73,7 @@ class App extends React.Component {
                 resizerStyle={rs}>
 
                 <UnitsList showConsole={this.showConsole} />
-                <LazyLog
-                    url={"/journal?name=" + this.state.serviceName}
-                    stream
-                    selectableLines
-                    follow
-                    style={s} />
+                {journalPane}
             </SplitPane>
         )
     }
