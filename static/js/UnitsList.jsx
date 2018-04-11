@@ -60,21 +60,20 @@ export default class UnitsList extends React.Component {
       }
     });
     this.setState({unitStates: states});
-    console.log("unitStates:", this.state.unitStates)
   }
 
   getReadonly() {
     axios
       .get("/readonly")
       .then((result) => {
-        console.log("readonly:" + result)
-        this.setState({ readonly: result });
+        console.log("readonly:" + result.data)
+        this.setState({ readonly: result.data });
       });
   }
 
   onUnitClicked(name, action) {
     console.log(action, ' unit:', name, ' readonly:', this.state.readonly);
-    if (this.state.readonly.data) {
+    if (this.state.readonly) {
       return
     }
     if (action == "describe") {
@@ -169,14 +168,14 @@ export default class UnitsList extends React.Component {
         <UnitsItem key={i}
           Unit={unit}
           onUnitClicked={this.onUnitClicked.bind(this)}
-          readonly={this.state.readonly.data} />
+          readonly={this.state.readonly} />
       );
     });
 
     let actionHeader = (
       <th scope="col">Action</th>
     )
-    if (this.state.readonly.data) (
+    if (this.state.readonly) (
       actionHeader = null
     )
 
