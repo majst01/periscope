@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"regexp"
 	"time"
 
@@ -31,6 +32,16 @@ func ListenAndServe(spec Specification) error {
 	p := &Periscope{
 		dbusConn: dbc,
 		spec:     &spec,
+	}
+
+	hostname, err := os.Hostname()
+	if err != nil {
+		hostname = "unknown"
+	}
+	log.Infof("hostname: %s", hostname)
+
+	if p.spec.DisplayName == "" {
+		p.spec.DisplayName = hostname
 	}
 
 	serviceRegex, err = regexp.Compile(spec.ServicePattern)

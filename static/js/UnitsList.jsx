@@ -183,8 +183,9 @@ export default class UnitsList extends React.Component {
       <React.StrictMode>
         <Container fluid>
           <Navbar color="light" light expand="lg">
-            <NavbarBrand href="#">Systemd Units</NavbarBrand>
-            <Form>
+            <NavbarBrand href="#">Systemd Units on {this.state.config.displayName}</NavbarBrand>
+            <UnitStates states={this.state.unitStates} />
+            <Form className="ml-auto p-2">
               <Input
                 type="search"
                 placeholder="Filter Service"
@@ -192,7 +193,6 @@ export default class UnitsList extends React.Component {
                 value={this.state.filterString}
                 onChange={this.onFilter.bind(this)}></Input>
             </Form>
-            <UnitStates states={this.state.unitStates} />
           </Navbar>
           <Table hover size="sm">
             <thead className="thead-dark">
