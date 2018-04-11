@@ -10,6 +10,7 @@ import {
 } from 'reactstrap';
 
 import UnitsItem from './UnitsItem.jsx';
+import UnitStates from './UnitStates.jsx';
 
 const SortOrder = {
   NAME_ASC: 1,
@@ -25,6 +26,7 @@ export default class UnitsList extends React.Component {
     super(props);
     this.state = {
       units: [],
+      unitStates: {},
       readonly: false,
       filterString: "",
       sortBy: SortOrder.NAME_ASC
@@ -43,7 +45,22 @@ export default class UnitsList extends React.Component {
       .then((result) => {
         console.log(result)
         this.setState({ units: result.data.Units });
+        this.getUnitStateCounters();
       });
+  }
+
+  getUnitStateCounters() {
+    let states = {};
+    this.state.units.map((unit, i) => {
+      if (unit.SubState in states) {
+        let newCount = states[unit.SubState] + 1;
+        states[unit.SubState] = newCount;
+      } else {
+        states[unit.SubState] = 1;
+      }
+    });
+    this.setState({unitStates: states});
+    console.log("unitStates:", this.state.unitStates)
   }
 
   getReadonly() {
@@ -176,6 +193,7 @@ export default class UnitsList extends React.Component {
                 value={this.state.filterString}
                 onChange={this.onFilter.bind(this)}></Input>
             </Form>
+            <UnitStates states={this.state.unitStates} />
           </Navbar>
           <Table hover size="sm">
             <thead className="thead-dark">

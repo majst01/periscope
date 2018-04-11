@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Button, ButtonGroup } from 'reactstrap';
 
-const ServiceState = {
+export const ServiceState = {
   loaded: "success",
   active: "success",
   inactive: "warning",
