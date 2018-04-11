@@ -27,7 +27,7 @@ export default class UnitsList extends React.Component {
     this.state = {
       units: [],
       unitStates: {},
-      readonly: false,
+      config: {},
       filterString: "",
       sortBy: SortOrder.NAME_ASC
     };
@@ -35,7 +35,7 @@ export default class UnitsList extends React.Component {
 
   componentDidMount() {
     this.getUnits()
-    this.getReadonly()
+    this.getConfig()
     window.setInterval(() => { this.getUnits() }, 5000)
   }
 
@@ -62,18 +62,18 @@ export default class UnitsList extends React.Component {
     this.setState({unitStates: states});
   }
 
-  getReadonly() {
+  getConfig() {
     axios
-      .get("/readonly")
+      .get("/config")
       .then((result) => {
-        console.log("readonly:" + result.data)
-        this.setState({ readonly: result.data });
+        console.log("config:" + result.data)
+        this.setState({ config: result.data });
       });
   }
 
   onUnitClicked(name, action) {
-    console.log(action, ' unit:', name, ' readonly:', this.state.readonly);
-    if (this.state.readonly) {
+    console.log(action, ' unit:', name, ' readonly:', this.state.config.readonly);
+    if (this.state.config.readonly) {
       return
     }
     if (action == "describe") {
@@ -168,14 +168,14 @@ export default class UnitsList extends React.Component {
         <UnitsItem key={i}
           Unit={unit}
           onUnitClicked={this.onUnitClicked.bind(this)}
-          readonly={this.state.readonly} />
+          readonly={this.state.config.readonly} />
       );
     });
 
     let actionHeader = (
       <th scope="col">Action</th>
     )
-    if (this.state.readonly) (
+    if (this.state.config.readonly) (
       actionHeader = null
     )
 

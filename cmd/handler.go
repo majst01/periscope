@@ -46,7 +46,7 @@ func ListenAndServe(spec Specification) error {
 	e.GET("/unit", p.UnitHandler)
 	e.GET("/journal", p.JournalHandler)
 	e.POST("/login", p.LoginHandler)
-	e.GET("/readonly", p.ReadonlyHandler)
+	e.GET("/config", p.ConfigHandler)
 	e.Static("/", "static")
 
 	srv := &http.Server{
@@ -189,9 +189,19 @@ func writeOutput(w http.ResponseWriter, r io.ReadCloser) {
 	}
 }
 
-// ReadonlyHandler returns the readonly status
-func (p *Periscope) ReadonlyHandler(c echo.Context) error {
-	return c.JSON(http.StatusOK, p.spec.Readonly)
+type Config struct {
+	DisplayName string `json:"displayName"`
+	ReadOnly    bool   `json:"readonly"`
+}
+
+// ConfigHandler returns the client configuration
+func (p *Periscope) ConfigHandler(c echo.Context) error {
+	config := &Config{
+		DisplayName: p.spec.DisplayName,
+		ReadOnly:    p.spec.Readonly,
+	}
+	log.Infof("config: %v", config)
+	return c.JSON(http.StatusOK, config)
 }
 
 func (p *Periscope) getUnit(name string) (dbus.UnitStatus, error) {
