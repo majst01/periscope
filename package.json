@@ -18,7 +18,7 @@
     "reactstrap": "^5.0.0"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
+    "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
@@ -26,7 +26,7 @@
     "css-loader": "^0.28.11",
     "style-loader": "^0.21.0",
     "webpack": "^4.6.0",
-    "webpack-cli": "^2.0.15",
+    "webpack-cli": "^2.1.2",
     "webpack-combine-loaders": "^2.0.3"
   },
   "scripts": {
