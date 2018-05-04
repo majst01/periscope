@@ -92,7 +92,7 @@
     "acme/autocert",
     "ssh/terminal"
   ]
-  revision = "db7d12313a59cd5b727192a287195e2cdfa40049"
+  revision = "1f94bef427e370e425e55b172f3b5e300ef38304"
 
 [[projects]]
   branch = "master"
@@ -101,7 +101,7 @@
     "unix",
     "windows"
   ]
-  revision = "f67ecc163a74fbeea4cb1db0a101dcd07201464a"
+  revision = "6f686a352de66814cdd080d970febae7767857a3"
 
 [solve-meta]
   analyzer-name = "dep"
