@@ -10,7 +10,7 @@ RUN apt update \
         libssl-dev \
  && go get -u github.com/golang/dep/cmd/dep \
  && make dep all \
- && curl -sL https://deb.nodesource.com/setup_8.x | bash - \
+ && curl -sL https://deb.nodesource.com/setup_10.x | bash - \
  && apt install -y nodejs \
  && npm install \
  && node_modules/.bin/webpack -p \
