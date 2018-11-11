@@ -1,26 +1,23 @@
-FROM golang:1.11 AS builder
-
-WORKDIR /go/src/github.com/majst01/periscope/
-
-COPY . /go/src/github.com/majst01/periscope/
-RUN apt update \
- && apt install -y \
-        libsystemd-dev \
-        build-essential \
-        libssl-dev \
- && go get -u github.com/golang/dep/cmd/dep \
- && make dep all \
- && curl -sL https://deb.nodesource.com/setup_10.x | bash - \
- && apt install -y nodejs \
- && npm install \
+FROM node:11 as node-builder
+WORKDIR /periscope/
+COPY . /periscope/
+RUN npm install \
  && node_modules/.bin/webpack -p \
  && rm -rf node_modules
 
+FROM golang:1.11 AS go-builder
+WORKDIR /periscope/
+RUN apt update \
+ && apt install -y \
+        libsystemd-dev \
+        make \
+        libssl-dev
+COPY . /periscope/
+RUN make periscope
+
 FROM debian:9-slim
-
-COPY --from=builder /go/src/github.com/majst01/periscope/periscope /periscope/
-COPY --from=builder /go/src/github.com/majst01/periscope/static /periscope/static
-
+COPY --from=go-builder /periscope/periscope /periscope/
+COPY --from=node-builder /periscope/static /periscope/static
 WORKDIR /periscope
 
 CMD ["/periscope/periscope"]
