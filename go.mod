@@ -5,7 +5,7 @@ require (
 	//github.com/coreos/go-systemd v0.0.0-20180202092358-40e2722dffea
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
-	github.com/godbus/dbus v0.0.0-20181101234600-2ff6f7ffd60f
+	github.com/godbus/dbus v0.0.0-20181101234600-2ff6f7ffd60f // indirect
 	github.com/kelseyhightower/envconfig v1.3.0
 	github.com/labstack/echo v3.3.5+incompatible
 	github.com/labstack/gommon v0.2.7 // indirect
