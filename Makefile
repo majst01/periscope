@@ -1,5 +1,4 @@
 periscope:
-	go mod download
 	go build
 
 test:

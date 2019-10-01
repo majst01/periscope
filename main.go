@@ -17,7 +17,10 @@ func main() {
 	var spec cmd.Specification
 	envconfig.MustProcess("periscope", &spec)
 	if len(os.Args) > 1 {
-		envconfig.Usage("periscope", &spec)
+		err := envconfig.Usage("periscope", &spec)
+		if err != nil {
+			os.Exit(1)
+		}
 		os.Exit(1)
 	}
 	if spec.Debug {

@@ -24,10 +24,10 @@ var (
 // ListenAndServe starts the listener with appropriate parameters from Specification
 func ListenAndServe(spec Specification) error {
 	dbc, err := dbus.New()
-	defer dbc.Close()
 	if err != nil {
 		log.Fatalf("unable to connect to dbus: %v", err)
 	}
+	defer dbc.Close()
 
 	p := &Periscope{
 		dbusConn: dbc,
@@ -157,7 +157,7 @@ func (p *Periscope) JournalHandler(c echo.Context) error {
 		case t := <-time.After(time.Duration(15) * time.Minute):
 			until <- t
 			log.Println("stop following because of timeout")
-		case _ = <-ctx.Done():
+		case <-ctx.Done():
 			if ctx.Err() == context.Canceled {
 				until <- time.Now()
 				log.Println("stop following because of cancellation")
@@ -189,7 +189,10 @@ func writeOutput(w http.ResponseWriter, r io.ReadCloser) {
 		}
 
 		data := buffer[0:n]
-		w.Write(data)
+		_, err = w.Write(data)
+		if err != nil {
+			continue
+		}
 		if f, ok := w.(http.Flusher); ok {
 			f.Flush()
 		}

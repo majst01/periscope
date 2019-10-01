@@ -1,11 +1,11 @@
-FROM node:11 as node-builder
+FROM node:12-slim as node-builder
 WORKDIR /periscope/
 COPY . /periscope/
 RUN npm install \
  && node_modules/.bin/webpack -p \
  && rm -rf node_modules
 
-FROM golang:1.11 AS go-builder
+FROM golang:1.13-buster AS go-builder
 WORKDIR /periscope/
 RUN apt update \
  && apt install -y \
@@ -15,7 +15,7 @@ RUN apt update \
 COPY . /periscope/
 RUN make periscope
 
-FROM debian:9-slim
+FROM debian:buster
 COPY --from=go-builder /periscope/periscope /periscope/
 COPY --from=node-builder /periscope/static /periscope/static
 WORKDIR /periscope
