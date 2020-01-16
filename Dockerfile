@@ -1,4 +1,4 @@
-FROM node:12-slim as node-builder
+FROM node:13-slim as node-builder
 WORKDIR /periscope/
 COPY . /periscope/
 RUN npm install \
