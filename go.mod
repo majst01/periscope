@@ -1,10 +1,7 @@
 module github.com/majst01/periscope
 
 require (
-	github.com/coreos/go-systemd v0.0.0-20190719114852-fd7a80b32e1f
-	//github.com/coreos/go-systemd v0.0.0-20180202092358-40e2722dffea
-	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f // indirect
-	github.com/godbus/dbus v0.0.0-20181101234600-2ff6f7ffd60f // indirect
+	github.com/coreos/go-systemd/v22 v22.0.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/kr/pretty v0.1.0 // indirect

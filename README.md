@@ -5,6 +5,7 @@ Periscope displays and manages systemd units from your browser.
 ## Quickstart
 
 Compile the binary with:
+
 ```bash
 $ make
 ```
@@ -24,11 +25,13 @@ PERISCOPE_DEBUG             True or False    false      False       turn on debu
 ```
 
 To start simply type:
+
 ```bash
 $ ./periscope
 ```
 
 or from a docker container:
+
 ```bash
 docker-compose up
 ```

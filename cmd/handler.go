@@ -12,8 +12,8 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/echo/v4"
 
-	"github.com/coreos/go-systemd/dbus"
-	"github.com/coreos/go-systemd/sdjournal"
+	"github.com/coreos/go-systemd/v22/dbus"
+	"github.com/coreos/go-systemd/v22/sdjournal"
 	log "github.com/sirupsen/logrus"
 )
 
