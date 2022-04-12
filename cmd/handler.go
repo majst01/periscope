@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -9,8 +10,8 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 
 	"github.com/coreos/go-systemd/v22/dbus"
 	"github.com/coreos/go-systemd/v22/sdjournal"
@@ -23,7 +24,8 @@ var (
 
 // ListenAndServe starts the listener with appropriate parameters from Specification
 func ListenAndServe(spec Specification) error {
-	dbc, err := dbus.New()
+	ctx := context.Background()
+	dbc, err := dbus.NewWithContext(ctx)
 	if err != nil {
 		log.Fatalf("unable to connect to dbus: %v", err)
 	}
@@ -101,23 +103,24 @@ func (p *Periscope) UnitHandler(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
+	ctx := context.Background()
 	var id int
 	switch action {
 	case "start":
 		if p.spec.Readonly {
 			return c.JSON(http.StatusOK, unit)
 		}
-		id, err = p.dbusConn.StartUnit(name, "replace", nil)
+		id, err = p.dbusConn.StartUnitContext(ctx, name, "replace", nil)
 	case "stop":
 		if p.spec.Readonly {
 			return c.JSON(http.StatusOK, unit)
 		}
-		id, err = p.dbusConn.StopUnit(name, "replace", nil)
+		id, err = p.dbusConn.StopUnitContext(ctx, name, "replace", nil)
 	case "restart":
 		if p.spec.Readonly {
 			return c.JSON(http.StatusOK, unit)
 		}
-		id, err = p.dbusConn.RestartUnit(name, "replace", nil)
+		id, err = p.dbusConn.RestartUnitContext(ctx, name, "replace", nil)
 	case "describe":
 		_, err = p.getJournal(name)
 	case "journal":
@@ -158,7 +161,7 @@ func (p *Periscope) JournalHandler(c echo.Context) error {
 			until <- t
 			log.Println("stop following because of timeout")
 		case <-ctx.Done():
-			if ctx.Err() == context.Canceled {
+			if errors.Is(ctx.Err(), context.Canceled) {
 				until <- time.Now()
 				log.Println("stop following because of cancellation")
 			}
@@ -166,7 +169,7 @@ func (p *Periscope) JournalHandler(c echo.Context) error {
 	}()
 
 	go func() {
-		if err = r.Follow(until, pw); err != sdjournal.ErrExpired {
+		if err = r.Follow(until, pw); !errors.Is(err, sdjournal.ErrExpired) {
 			log.Fatalf("Error during follow: %s", err)
 		}
 		pw.Close()
@@ -222,7 +225,7 @@ func (p *Periscope) getUnit(name string) (dbus.UnitStatus, error) {
 	units, err := p.getUnits()
 	var result dbus.UnitStatus
 	if err != nil {
-		return result, fmt.Errorf("unable to list units:%v", err)
+		return result, fmt.Errorf("unable to list units:%w", err)
 	}
 	for _, unit := range units {
 		if unit.Name == name {
@@ -234,9 +237,9 @@ func (p *Periscope) getUnit(name string) (dbus.UnitStatus, error) {
 }
 
 func (p *Periscope) getUnits() ([]dbus.UnitStatus, error) {
-	units, err := p.dbusConn.ListUnits()
+	units, err := p.dbusConn.ListUnitsContext(context.Background())
 	if err != nil {
-		return nil, fmt.Errorf("unable to list units:%v", err)
+		return nil, fmt.Errorf("unable to list units:%w", err)
 	}
 	var result []dbus.UnitStatus
 	for _, unit := range units {
@@ -264,7 +267,7 @@ func (p *Periscope) getJournal(name string) (*sdjournal.JournalReader, error) {
 			},
 		})
 	if err != nil {
-		return nil, fmt.Errorf("Error opening journal: %s", err)
+		return nil, fmt.Errorf("Error opening journal: %w", err)
 	}
 	if journalReader == nil {
 		return nil, fmt.Errorf("Got a nil reader")

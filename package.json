@@ -4,9 +4,9 @@
   "description": "Periscope displays and manages systemd units from your browser.",
   "main": "index.js",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.26.1",
     "bootstrap": "^4.4.1",
-    "jquery": "^3.5.0",
+    "jquery": "^3.6.0",
     "npm-check-updates": "^4.1.2",
     "popper.js": "^1.16.1",
     "prop-types": "^15.7.2",
