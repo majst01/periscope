@@ -63,7 +63,8 @@ func ListenAndServe(spec Specification) error {
 	e.Static("/", "static")
 
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%s", spec.Port),
+		Addr:              fmt.Sprintf(":%s", spec.Port),
+		ReadHeaderTimeout: 20 * time.Second,
 	}
 
 	return e.StartServer(srv)
